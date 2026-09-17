@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using CustomerManagement.Client.Authentication;
 using CustomerManagement.Client.Models;
 
 namespace CustomerManagement.Client.Services
@@ -8,15 +9,26 @@ namespace CustomerManagement.Client.Services
     {
         private const string LoginEndpoint = "api/auth/login";
         private readonly IApiClient _apiClient;
+        private readonly ITokenStore _tokenStore;
+        private readonly JwtAuthenticationStateProvider _stateProvider;
 
-        public AuthService(IApiClient apiClient)
+        public AuthService(IApiClient apiClient, ITokenStore tokenStore, JwtAuthenticationStateProvider stateProvider)
         {
             _apiClient = apiClient;
+            _tokenStore = tokenStore;
+            _stateProvider = stateProvider;
         }
 
         public async Task<LoginResult> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
         {
-            var response = await _apiClient.HttpClient.PostAsJsonAsync(LoginEndpoint, request, cancellationToken);
+            using var message = new HttpRequestMessage(HttpMethod.Post, LoginEndpoint)
+            {
+                Content = JsonContent.Create(request)
+            };
+
+            message.WithoutAuthentication();
+
+            var response = await _apiClient.HttpClient.SendAsync(message, cancellationToken);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
@@ -42,17 +54,20 @@ namespace CustomerManagement.Client.Services
                 ExpiresAtUtc = loginResponse.ExpiresAtUtc
             };
 
+            await _tokenStore.SetSessionAsync(session);
+            await _stateProvider.NotifyUserAuthentication(session);
+
             return LoginResult.Success(session);
         }
 
         public Task LogoutAsync()
         {
-            return Task.CompletedTask;
+            return _stateProvider.NotifyUserLogoutAsync();
         }
 
         public Task<AuthSession?> GetSessionAsync()
         {
-            return Task.FromResult<AuthSession?>(null);
+            return _tokenStore.GetSessionAsync();
         }
     }
 }
