@@ -37,6 +37,7 @@ namespace CustomerManagement.Client
             .AddHttpMessageHandler<JwtAuthorizationHandler>();
 
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddMudServices();
 
             await builder.Build().RunAsync();
