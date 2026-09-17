@@ -64,6 +64,13 @@ namespace CustomerManagement.Client.Services
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", StorageKey, json);
         }
 
+        public Task InitializeInMemorySessionAsync(AuthSession session)
+        {
+            _session = session;
+            _loaded = true;
+            return Task.CompletedTask;
+        }
+
         public async Task ClearAsync()
         {
             _session = null;
