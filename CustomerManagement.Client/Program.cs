@@ -22,6 +22,7 @@ namespace CustomerManagement.Client
                 client.BaseAddress = new Uri(apiBaseUrl);
             });
 
+            builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddMudServices();
 
             await builder.Build().RunAsync();
