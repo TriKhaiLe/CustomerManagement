@@ -1,0 +1,165 @@
+@page "/login"
+@layout LoginLayout
+
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<MudPaper Elevation="4" Class="pa-8" Style="width: 100%; max-width: 420px;">
+    <div class="d-flex flex-column align-center mb-6">
+        <MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Large" Color="Color.Primary" />
+        <MudText Typo="Typo.h5" Class="mt-3">Customer Management</MudText>
+        <MudText Typo="Typo.body1" Color="Color.Secondary">Sign in to continue</MudText>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(_error))
+    {
+        <MudAlert Severity="Severity.Error" Variant="Variant.Filled" Dense="true" Class="mb-4">@_error</MudAlert>
+    }
+
+    <MudForm @ref="_form" Model="_model">
+        <MudStack Spacing="3">
+            <MudTextField @bind-Value="_model.Username"
+                          For="@(() => _model.Username)"
+                          Label="Username"
+                          Variant="Variant.Outlined"
+                          Required="true"
+                          RequiredError="Username is required."
+                          Immediate="true"
+                          Disabled="_busy"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Person"
+                          AdornmentColor="Color.Default"
+                          autocomplete="username"
+                          OnKeyDown="OnKeyDown" />
+
+            <MudTextField @bind-Value="_model.Password"
+                          For="@(() => _model.Password)"
+                          Label="Password"
+                          Variant="Variant.Outlined"
+                          Required="true"
+                          RequiredError="Password is required."
+                          Immediate="true"
+                          Disabled="_busy"
+                          InputType="_showPassword ? InputType.Text : InputType.Password"
+                          Adornment="Adornment.End"
+                          AdornmentIcon="@(_showPassword ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+                          OnAdornmentClick="TogglePasswordVisibility"
+                          AdornmentAriaLabel="@(_showPassword ? "Hide password" : "Show password")"
+                          autocomplete="current-password"
+                          OnKeyDown="OnKeyDown" />
+
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       FullWidth="true"
+                       Disabled="_busy"
+                       OnClick="SubmitAsync">
+                @if (_busy)
+                {
+                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
+                    <span>Signing in…</span>
+                }
+                else
+                {
+                    <span>Login</span>
+                }
+            </MudButton>
+        </MudStack>
+    </MudForm>
+</MudPaper>
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = LoginRoute.ReturnUrlParameter)]
+    public string? ReturnUrl { get; set; }
+
+    private readonly LoginRequest _model = new();
+    private MudForm? _form;
+    private bool _busy;
+    private bool _showPassword;
+    private string? _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        if (authState.User.Identity?.IsAuthenticated is true)
+        {
+            Navigation.NavigateTo(ResolveReturnTarget(), replace: true);
+        }
+    }
+
+    private async Task SubmitAsync()
+    {
+        if (_busy)
+        {
+            return;
+        }
+
+        if (_form is not null)
+        {
+            await _form.ValidateAsync();
+            if (!_form.IsValid)
+            {
+                return;
+            }
+        }
+
+        _busy = true;
+        _error = null;
+
+        try
+        {
+            var result = await AuthService.LoginAsync(_model);
+
+            if (result.Succeeded && result.Session is not null)
+            {
+                Navigation.NavigateTo(ResolveReturnTarget(), replace: true);
+                return;
+            }
+
+            _error = result.Error ?? "Unable to sign in. Please try again.";
+            _model.Password = string.Empty;
+        }
+        catch (HttpRequestException)
+        {
+            _error = "Cannot reach the server. Check your connection and try again.";
+            _model.Password = string.Empty;
+        }
+        catch (TaskCanceledException)
+        {
+            _error = "The request timed out. Please try again.";
+            _model.Password = string.Empty;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private void TogglePasswordVisibility()
+    {
+        _showPassword = !_showPassword;
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter" || args.Key == "NumpadEnter")
+        {
+            await SubmitAsync();
+        }
+    }
+
+    private string ResolveReturnTarget()
+    {
+        var target = ReturnUrl;
+
+        if (string.IsNullOrWhiteSpace(target) || Uri.TryCreate(target, UriKind.Absolute, out _) || target.StartsWith("//", StringComparison.Ordinal)
+            || target.StartsWith("login", StringComparison.OrdinalIgnoreCase))
+        {
+            return "customers";
+        }
+
+        return target;
+    }
+}
