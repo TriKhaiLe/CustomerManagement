@@ -38,7 +38,17 @@ namespace CustomerManagement.Client
             .AddHttpMessageHandler<JwtAuthorizationHandler>();
 
             builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddScoped<ICustomerService, CustomerService>();
+
+            // Register the customer service implementation. When TestingMode is enabled
+            // we'll replace the real API-backed service with an in-memory fake for UI testing.
+            if (bool.TryParse(builder.Configuration["TestingMode"], out var testingMode) && testingMode)
+            {
+                builder.Services.AddScoped<ICustomerService, FakeCustomerService>();
+            }
+            else
+            {
+                builder.Services.AddScoped<ICustomerService, CustomerService>();
+            }
             builder.Services.AddMudServices(config =>
             {
                 // Bottom-right keeps toasts clear of the app bar and the table toolbar.
@@ -53,7 +63,38 @@ namespace CustomerManagement.Client
                 config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
             });
 
-            await builder.Build().RunAsync();
+            var host = builder.Build();
+
+            // If the client is configured for testing mode, create a fake session
+            // and initialize it in-memory so components and HTTP handlers can use it.
+            if (bool.TryParse(builder.Configuration["TestingMode"], out var bypass) && bypass)
+            {
+                var tokenStore = host.Services.GetRequiredService<ITokenStore>();
+                var stateProvider = host.Services.GetRequiredService<JwtAuthenticationStateProvider>();
+
+                var fakeUsername = "tester";
+                var header = "{\"alg\":\"none\",\"typ\":\"JWT\"}";
+                var payload = System.Text.Json.JsonSerializer.Serialize(new { name = fakeUsername, role = new[] { "Admin" } });
+                string ToBase64Url(string s)
+                {
+                    var bytes = System.Text.Encoding.UTF8.GetBytes(s);
+                    return Convert.ToBase64String(bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+                }
+
+                var fakeToken = ToBase64Url(header) + "." + ToBase64Url(payload) + "." + "signature";
+
+                var session = new CustomerManagement.Client.Models.AuthSession
+                {
+                    AccessToken = fakeToken,
+                    Username = fakeUsername,
+                    ExpiresAtUtc = DateTimeOffset.UtcNow.AddHours(1)
+                };
+
+                await tokenStore.InitializeInMemorySessionAsync(session);
+                await stateProvider.NotifyUserAuthentication(session);
+            }
+
+            await host.RunAsync();
         }
     }
 }

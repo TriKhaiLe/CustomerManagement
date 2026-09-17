@@ -12,6 +12,10 @@ namespace CustomerManagement.Client.Services
 
         Task SetSessionAsync(AuthSession session);
 
+        // Initialize a session in-memory without writing to JS localStorage.
+        // Useful for testing scenarios where the app should run with a fake session.
+        Task InitializeInMemorySessionAsync(AuthSession session);
+
         Task ClearAsync();
     }
 }
