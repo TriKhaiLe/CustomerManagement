@@ -1,3 +1,4 @@
+using CustomerManagement.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 using Server.Application.Common.Interfaces;
 using Server.Domain.Common;
@@ -41,6 +42,38 @@ public class CustomerRepository : ICustomerRepository
     {
         _context.Customers.Add(customer);
         return Task.CompletedTask;
+    }
+
+    public async Task<(IReadOnlyList<Customer> Items, int TotalCount)> SearchAsync(
+        CustomerSearchField? searchField,
+        string? searchTerm,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _context.Customers.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var pattern = $"%{searchTerm.Trim()}%";
+            query = searchField switch
+            {
+                CustomerSearchField.PhoneNumber => query.Where(c => EF.Functions.Like(c.PhoneNumber, pattern)),
+                _ => query.Where(c => EF.Functions.Like(c.FullName, pattern))
+            };
+        }
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderBy(c => c.FullName)
+            .ThenBy(c => c.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
     }
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>

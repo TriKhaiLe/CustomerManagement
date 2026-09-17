@@ -67,4 +67,22 @@ public class CustomerService : ICustomerService
         return $"{CustomerCodeDefaults.AutoPrefix}{nextSequence:D5}";
     }
 
+    public async Task<PagedResult<CustomerDto>> SearchAsync(CustomerQueryParameters query, CancellationToken cancellationToken = default)
+    {
+        var (items, totalCount) = await _repository.SearchAsync(
+            query.SearchField,
+            query.SearchTerm,
+            query.Page,
+            query.PageSize,
+            cancellationToken);
+
+        return new PagedResult<CustomerDto>
+        {
+            Items = items.Select(c => c.ToDto()).ToList(),
+            Page = query.Page,
+            PageSize = query.PageSize,
+            TotalCount = totalCount
+        };
+    }
+
 }
