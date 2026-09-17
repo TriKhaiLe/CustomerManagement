@@ -1,5 +1,331 @@
 @page "/customers"
+@using Microsoft.AspNetCore.Components.Web
+@inject ICustomerService CustomerService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
 
 <PageTitle>Customers</PageTitle>
 
 <MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">Customers</MudText>
+
+<ErrorAlert Message="@_error" OnRetry="ReloadAsync" />
+
+<MudTable @ref="_table"
+          T="CustomerDto"
+          ServerData="LoadAsync"
+          Loading="_isLoading"
+          Hover="true"
+          Striped="true"
+          Elevation="1"
+          Dense="true">
+    <ToolBarContent>
+        <MudGrid Spacing="2" Class="align-center py-2" Style="width: 100%;">
+            <MudItem xs="12" md="3">
+                <MudSelect T="CustomerSearchField"
+                           @bind-Value="_searchField"
+                           Label="Search field"
+                           Variant="Variant.Outlined"
+                           Dense="true"
+                           Margin="Margin.Dense">
+                    <MudSelectItem Value="CustomerSearchField.FullName">Full name</MudSelectItem>
+                    <MudSelectItem Value="CustomerSearchField.PhoneNumber">Phone number</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+
+            <MudItem xs="12" md="5">
+                <MudTextField @bind-Value="_searchTerm"
+                              Label="Search term"
+                              Variant="Variant.Outlined"
+                              Immediate="true"
+                              Margin="Margin.Dense"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Search"
+                              OnKeyDown="HandleSearchKeyDown" />
+            </MudItem>
+
+            <MudItem xs="12" md="4" Class="d-flex align-center justify-end gap-2">
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.Search"
+                           Disabled="_isLoading"
+                           OnClick="SearchAsync">
+                    Search
+                </MudButton>
+
+                <MudButton Variant="Variant.Outlined"
+                           Color="Color.Primary"
+                           Disabled="_isLoading"
+                           OnClick="ClearAsync">
+                    Clear
+                </MudButton>
+
+                <MudSpacer />
+
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Secondary"
+                           StartIcon="@Icons.Material.Filled.Add"
+                           OnClick="@(() => Navigation.NavigateTo("/customers/create"))">
+                    Create
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh>Code</MudTh>
+        <MudTh>Full name</MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>Phone</MudTh>
+        <MudTh>Date of birth</MudTh>
+        <MudTh>Status</MudTh>
+        <MudTh>Created</MudTh>
+        <MudTh Class="text-right">Actions</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="Code">@context.CustomerCode</MudTd>
+        <MudTd DataLabel="Full name">@context.FullName</MudTd>
+        <MudTd DataLabel="Email">@context.Email</MudTd>
+        <MudTd DataLabel="Phone">@Display(context.PhoneNumber)</MudTd>
+        <MudTd DataLabel="Date of birth">@Display(context.DateOfBirth?.ToString("d"))</MudTd>
+        <MudTd DataLabel="Status"><CustomerStatusChip IsActive="context.IsActive" /></MudTd>
+        <MudTd DataLabel="Created">@context.CreatedAt.LocalDateTime.ToString("g")</MudTd>
+        <MudTd DataLabel="Actions" Class="text-right">
+            <MudStack Row="true" Justify="Justify.FlexEnd" AlignItems="AlignItems.Center" Spacing="0">
+                <MudTooltip Text="Edit customer">
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                   Color="Color.Primary"
+                                   aria-label="@($"Edit {context.FullName}")"
+                                   OnClick="@(() => Navigation.NavigateTo($"/customers/{context.Id}/edit"))" />
+                </MudTooltip>
+
+                <MudTooltip Text="Delete customer">
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                   Color="Color.Error"
+                                   aria-label="@($"Delete {context.FullName}")"
+                                   Disabled="_deletingId == context.Id"
+                                   OnClick="@(() => DeleteAsync(context))" />
+                </MudTooltip>
+            </MudStack>
+        </MudTd>
+    </RowTemplate>
+
+    <NoRecordsContent>
+        @if (HasActiveSearch)
+        {
+            <MudStack AlignItems="AlignItems.Center" Class="py-8 px-4 text-center">
+                <MudIcon Icon="@Icons.Material.Filled.SearchOff" Size="Size.Large" Color="Color.Info" />
+                <MudText Typo="Typo.h6">No matching customers</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">Nothing matched that search. Try a different term, or clear the search.</MudText>
+                <MudButton Variant="Variant.Outlined"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.Clear"
+                           OnClick="ClearAsync">
+                    Clear search
+                </MudButton>
+            </MudStack>
+        }
+        else
+        {
+            <MudStack AlignItems="AlignItems.Center" Class="py-8 px-4 text-center">
+                <MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Large" Color="Color.Primary" />
+                <MudText Typo="Typo.h6">No customers yet</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">Create your first customer to get started.</MudText>
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Secondary"
+                           StartIcon="@Icons.Material.Filled.Add"
+                           OnClick="@(() => Navigation.NavigateTo("/customers/create"))">
+                    Create customer
+                </MudButton>
+            </MudStack>
+        }
+    </NoRecordsContent>
+
+    <LoadingContent>
+        <LoadingIndicator Message="Loading customers…" />
+    </LoadingContent>
+
+    <PagerContent>
+        <div class="d-flex align-center justify-space-between gap-4 w-100">
+            <MudText Typo="Typo.caption">@PageSummary</MudText>
+            <MudTablePager PageSizeOptions="_pageSizeOptions" />
+        </div>
+    </PagerContent>
+</MudTable>
+
+@code {
+    private const string CreateCustomerRoute = "/customers/create";
+    private static readonly int[] _pageSizeOptions = { 10, 25, 50, 100 };
+
+    private MudTable<CustomerDto>? _table;
+    private bool _isLoading;
+    private string? _error;
+    private PagedResult<CustomerDto>? _page;
+    private CustomerSearchField _searchField = CustomerSearchField.FullName;
+    private CustomerSearchField _appliedSearchField = CustomerSearchField.FullName;
+    private string? _searchTerm;
+    private string? _appliedSearchTerm;
+    private int? _deletingId;
+
+    private bool HasActiveSearch => _appliedSearchTerm is not null;
+
+    private string PageSummary
+    {
+        get
+        {
+            if (_page is null)
+            {
+                return string.Empty;
+            }
+
+            var suffix = _page.TotalCount == 1 ? string.Empty : "s";
+            return $"Page {_page.PageNumber} of {_page.TotalPages} · {_page.TotalCount} customer{suffix}";
+        }
+    }
+
+    private static string Display(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? "—" : value;
+    }
+
+    private async Task<TableData<CustomerDto>> LoadAsync(TableState state, CancellationToken ct)
+    {
+        _isLoading = true;
+        _error = null;
+        StateHasChanged();
+
+        try
+        {
+            var query = new CustomerQuery
+            {
+                PageNumber = state.Page + 1,
+                PageSize = state.PageSize,
+                SearchTerm = HasActiveSearch ? _appliedSearchTerm : null,
+                SearchField = HasActiveSearch ? _appliedSearchField : null
+            };
+
+            _page = await CustomerService.GetCustomersAsync(query, ct);
+            return new TableData<CustomerDto>
+            {
+                Items = _page.Items,
+                TotalItems = _page.TotalCount
+            };
+        }
+        catch (ApiException e)
+        {
+            _error = e.Message;
+            _page = null;
+            return new TableData<CustomerDto>();
+        }
+        finally
+        {
+            _isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task SearchAsync()
+    {
+        _appliedSearchTerm = string.IsNullOrWhiteSpace(_searchTerm) ? null : _searchTerm.Trim();
+        _appliedSearchField = _searchField;
+        await ReloadFromFirstPageAsync();
+    }
+
+    private async Task ClearAsync()
+    {
+        _searchTerm = string.Empty;
+        _searchField = CustomerSearchField.FullName;
+        _appliedSearchTerm = null;
+        _appliedSearchField = CustomerSearchField.FullName;
+        await ReloadFromFirstPageAsync();
+    }
+
+    private async Task ReloadAsync()
+    {
+        await ReloadFromFirstPageAsync();
+    }
+
+    private Task ReloadFromFirstPageAsync()
+    {
+        if (_table is null)
+        {
+            return Task.CompletedTask;
+        }
+
+        if (_table.CurrentPage != 0)
+        {
+            _table.NavigateTo(0);
+            return Task.CompletedTask;
+        }
+
+        _table.ReloadServerData();
+        return Task.CompletedTask;
+    }
+
+    private async Task HandleSearchKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter" || args.Key == "NumpadEnter")
+        {
+            await SearchAsync();
+        }
+    }
+
+    private async Task DeleteAsync(CustomerDto customer)
+    {
+        var parameters = new DialogParameters<ConfirmDialog>
+        {
+            { x => x.Title, "Delete customer" },
+            { x => x.Message, $"Delete {customer.FullName}?" },
+            { x => x.Detail, $"Customer {customer.CustomerCode} will be permanently removed. This cannot be undone." },
+            { x => x.ConfirmText, "Delete" },
+            { x => x.Color, Color.Error },
+            { x => x.Icon, Icons.Material.Filled.DeleteForever }
+        };
+
+        var options = new DialogOptions
+        {
+            MaxWidth = MaxWidth.ExtraSmall,
+            FullWidth = true,
+            CloseOnEscapeKey = true
+        };
+
+        var result = await DialogService.ShowAsync<ConfirmDialog>(parameters, options);
+        var dialogResult = await result.Result;
+        if (dialogResult is not { Canceled: false })
+        {
+            return;
+        }
+
+        _deletingId = customer.Id;
+
+        try
+        {
+            await CustomerService.DeleteAsync(customer.Id);
+            Snackbar.Add($"{customer.FullName} was deleted.", Severity.Success);
+            await ReloadAsync();
+        }
+        catch (ApiException e)
+        {
+            if (e.IsNotFound)
+            {
+                Snackbar.Add($"{customer.FullName} had already been deleted.", Severity.Info);
+                await ReloadAsync();
+                return;
+            }
+
+            if (e.IsConflict)
+            {
+                Snackbar.Add(e.Message, Severity.Warning);
+                await ReloadAsync();
+                return;
+            }
+
+            Snackbar.Add(e.Message, Severity.Error);
+        }
+        finally
+        {
+            _deletingId = null;
+        }
+    }
+}

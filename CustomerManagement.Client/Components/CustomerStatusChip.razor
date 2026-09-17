@@ -1,0 +1,15 @@
+<MudChip T="string"
+         Color="@(IsActive ? Color.Success : Color.Default)"
+         Variant="Variant.Filled"
+         Size="@Size"
+         Class="@Class">
+    @(IsActive ? "Active" : "Inactive")
+</MudChip>
+
+@code {
+    [Parameter, EditorRequired] public bool IsActive { get; set; }
+
+    [Parameter] public Size Size { get; set; } = Size.Small;
+
+    [Parameter] public string? Class { get; set; }
+}
