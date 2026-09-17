@@ -1,0 +1,207 @@
+@page "/customers/{Id:int}/edit"
+@inject ICustomerService CustomerService
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
+
+<PageTitle>Edit customer</PageTitle>
+
+@if (_isLoading)
+{
+    <LoadingIndicator Message="Loading customer…" Compact="true" />
+}
+else if (_notFound)
+{
+    <MudPaper Elevation="1" Class="pa-6" Style="max-width: 720px;">
+        <MudStack AlignItems="AlignItems.Center" Spacing="2">
+            <MudIcon Icon="@Icons.Material.Filled.PersonOff" Size="Size.Large" Color="Color.Info" />
+            <MudText Typo="Typo.h5">Customer not found</MudText>
+            <MudText Typo="Typo.body1" Color="Color.Secondary">Customer @Id does not exist, or has since been deleted.</MudText>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.ArrowBack"
+                       OnClick="@(() => Navigation.NavigateTo("customers"))">
+                Back to customers
+            </MudButton>
+        </MudStack>
+    </MudPaper>
+}
+else if (!string.IsNullOrWhiteSpace(_loadError))
+{
+    <MudPaper Elevation="1" Class="pa-6" Style="max-width: 720px;">
+        <ErrorAlert Message="@_loadError" OnRetry="LoadAsync" />
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.ArrowBack"
+                   Class="mt-4"
+                   OnClick="@(() => Navigation.NavigateTo("customers"))">
+            Back to customers
+        </MudButton>
+    </MudPaper>
+}
+else
+{
+    <MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">Edit customer</MudText>
+
+    <MudPaper Elevation="1" Class="pa-6" Style="max-width: 720px;">
+        <ErrorAlert Message="@_error" Severity="@_errorSeverity" />
+
+        <ErrorAlert Severity="Severity.Warning"
+                    Title="The server rejected this request"
+                    Messages="_validator.UnmappedErrors" />
+
+        <MudForm @ref="_form" Model="_model">
+            <MudTextField Value="_customerCode"
+                          Label="Customer code"
+                          Variant="Variant.Outlined"
+                          Disabled="true"
+                          ReadOnly="true"
+                          HelperText="Assigned at creation and cannot be changed." />
+
+            @*
+                The code field is read-only here and absent from UpdateCustomerRequest, so it cannot be changed by the UI or by the payload.
+            *@
+            <CustomerFormFields Model="_model"
+                                Validator="_validator.Validate"
+                                Disabled="_isSaving" />
+
+            <div class="d-flex justify-end mt-6 gap-2">
+                <MudButton Variant="Variant.Text"
+                           Color="Color.Default"
+                           Disabled="_isSaving"
+                           OnClick="CancelAsync">
+                    Cancel
+                </MudButton>
+
+                <MudButton Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Disabled="_isSaving"
+                           OnClick="SubmitAsync">
+                    @if (_isSaving)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
+                        <span>Saving…</span>
+                    }
+                    else
+                    {
+                        <span>Save changes</span>
+                    }
+                </MudButton>
+            </div>
+        </MudForm>
+    </MudPaper>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private readonly UpdateCustomerRequest _model = new();
+    private readonly ServerAwareValidator _validator = new(typeof(UpdateCustomerRequest));
+    private MudForm? _form;
+    private bool _isLoading = true;
+    private bool _notFound;
+    private bool _isSaving;
+    private string? _error;
+    private string? _loadError;
+    private string _customerCode = string.Empty;
+    private Severity _errorSeverity = Severity.Error;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // Navigating straight from one customer's edit page to another reuses this component instance,
+        // so the parameter change must trigger a fresh load rather than only trusting the initial state.
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        _error = null;
+        _errorSeverity = Severity.Error;
+        _loadError = null;
+        _notFound = false;
+        _isLoading = true;
+        _validator.ClearServerErrors();
+
+        try
+        {
+            var customer = await CustomerService.GetByIdAsync(Id);
+
+            if (customer is null)
+            {
+                _notFound = true;
+                return;
+            }
+
+            _model.FullName = customer.FullName;
+            _model.Email = customer.Email;
+            _model.PhoneNumber = customer.PhoneNumber;
+            _model.DateOfBirth = customer.DateOfBirth;
+            _model.IsActive = customer.IsActive;
+            _customerCode = customer.CustomerCode;
+        }
+        catch (ApiException e)
+        {
+            _loadError = e.Message;
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task SubmitAsync()
+    {
+        if (_isSaving || _form is null)
+        {
+            return;
+        }
+
+        _error = null;
+        _validator.ClearServerErrors();
+        await _form.ValidateAsync();
+
+        if (!_form.IsValid)
+        {
+            return;
+        }
+
+        _isSaving = true;
+
+        try
+        {
+            await CustomerService.UpdateAsync(Id, _model);
+            Snackbar.Add($"Customer {_customerCode} updated.", Severity.Success);
+            Navigation.NavigateTo("customers");
+        }
+        catch (ApiException e) when (e.IsValidationProblem)
+        {
+            _validator.SetServerErrors(e);
+            await _form.ValidateAsync();
+        }
+        catch (ApiException e) when (e.IsNotFound)
+        {
+            Snackbar.Add($"Customer {_customerCode} no longer exists. It may have been deleted.", Severity.Warning);
+            Navigation.NavigateTo("customers");
+        }
+        catch (ApiException e) when (e.IsConflict)
+        {
+            _error = e.Message;
+            _errorSeverity = Severity.Warning;
+        }
+        catch (ApiException e)
+        {
+            _error = e.Message;
+            _errorSeverity = Severity.Error;
+        }
+        finally
+        {
+            _isSaving = false;
+        }
+    }
+
+    private void CancelAsync()
+    {
+        Navigation.NavigateTo("customers");
+    }
+}

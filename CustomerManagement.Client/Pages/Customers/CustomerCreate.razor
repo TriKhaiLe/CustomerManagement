@@ -1,0 +1,117 @@
+@page "/customers/create"
+@inject ICustomerService CustomerService
+@inject ISnackbar Snackbar
+@inject NavigationManager Navigation
+
+<PageTitle>New customer</PageTitle>
+
+<MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">New customer</MudText>
+
+<MudPaper Elevation="1" Class="pa-6" Style="max-width: 720px;">
+    <ErrorAlert Message="@_error" Severity="@_errorSeverity" />
+
+    <ErrorAlert Severity="Severity.Warning"
+                Title="The server rejected this request"
+                Messages="_validator.UnmappedErrors" />
+
+    <MudForm @ref="_form" Model="_model">
+        <MudTextField @bind-Value="_model.CustomerCode"
+                      For="@(() => _model.CustomerCode)"
+                      Validation="@_validator.Validate"
+                      Label="Customer code"
+                      Variant="Variant.Outlined"
+                      Immediate="true"
+                      Disabled="_isSaving"
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Tag"
+                      AdornmentColor="Color.Default"
+                      HelperText="Optional. Leave blank and the server assigns one." />
+
+        <CustomerFormFields Model="_model"
+                            Validator="_validator.Validate"
+                            Disabled="_isSaving" />
+
+        <div class="d-flex justify-end mt-6 gap-2">
+            <MudButton Variant="Variant.Text"
+                       Color="Color.Default"
+                       Disabled="_isSaving"
+                       OnClick="CancelAsync">
+                Cancel
+            </MudButton>
+
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Disabled="_isSaving"
+                       OnClick="SubmitAsync">
+                @if (_isSaving)
+                {
+                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
+                    <span>Creating…</span>
+                }
+                else
+                {
+                    <span>Create customer</span>
+                }
+            </MudButton>
+        </div>
+    </MudForm>
+</MudPaper>
+
+@code {
+    private readonly CreateCustomerRequest _model = new();
+    private readonly ServerAwareValidator _validator = new(typeof(CreateCustomerRequest));
+    private MudForm? _form;
+    private bool _isSaving;
+    private string? _error;
+    private Severity _errorSeverity = Severity.Error;
+
+    private async Task SubmitAsync()
+    {
+        if (_isSaving || _form is null)
+        {
+            return;
+        }
+
+        _error = null;
+        _validator.ClearServerErrors();
+        await _form.ValidateAsync();
+
+        if (!_form.IsValid)
+        {
+            return;
+        }
+
+        _isSaving = true;
+
+        try
+        {
+            var created = await CustomerService.CreateAsync(_model);
+            Snackbar.Add($"Customer {created.CustomerCode} created.", Severity.Success);
+            Navigation.NavigateTo("customers");
+        }
+        catch (ApiException e) when (e.IsValidationProblem)
+        {
+            _validator.SetServerErrors(e);
+            await _form.ValidateAsync();
+        }
+        catch (ApiException e) when (e.IsConflict)
+        {
+            _error = e.Message;
+            _errorSeverity = Severity.Warning;
+        }
+        catch (ApiException e)
+        {
+            _error = e.Message;
+            _errorSeverity = Severity.Error;
+        }
+        finally
+        {
+            _isSaving = false;
+        }
+    }
+
+    private void CancelAsync()
+    {
+        Navigation.NavigateTo("customers");
+    }
+}

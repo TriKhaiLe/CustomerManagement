@@ -3,6 +3,7 @@ using CustomerManagement.Client.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor;
 using MudBlazor.Services;
 
 namespace CustomerManagement.Client
@@ -38,7 +39,19 @@ namespace CustomerManagement.Client
 
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
-            builder.Services.AddMudServices();
+            builder.Services.AddMudServices(config =>
+            {
+                // Bottom-right keeps toasts clear of the app bar and the table toolbar.
+                config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomRight;
+
+                // Deleting several rows in a row would otherwise stack identical toasts.
+                config.SnackbarConfiguration.PreventDuplicates = true;
+
+                config.SnackbarConfiguration.NewestOnTop = true;
+                config.SnackbarConfiguration.ShowCloseIcon = true;
+                config.SnackbarConfiguration.VisibleStateDuration = 4000;
+                config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+            });
 
             await builder.Build().RunAsync();
         }
