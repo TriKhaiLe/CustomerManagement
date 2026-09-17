@@ -37,4 +37,12 @@ public class CustomersController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(typeof(CustomerDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<CustomerDto>> GetById(int id, CancellationToken cancellationToken)
+    {
+        var result = await _customerService.GetByIdAsync(id, cancellationToken);
+        return Ok(result);
+    }
 }
