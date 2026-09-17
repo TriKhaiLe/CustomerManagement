@@ -76,6 +76,9 @@ public class CustomerRepository : ICustomerRepository
         return (items, totalCount);
     }
 
+    public Task<Customer?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>
+        _context.Customers.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
         _context.SaveChangesAsync(cancellationToken);
 }

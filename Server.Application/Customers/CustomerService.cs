@@ -85,4 +85,12 @@ public class CustomerService : ICustomerService
         };
     }
 
+    public async Task<CustomerDto> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var customer = await _repository.GetByIdAsync(id, cancellationToken)
+            ?? throw new NotFoundException(nameof(Customer), id);
+
+        return customer.ToDto();
+    }
+
 }
