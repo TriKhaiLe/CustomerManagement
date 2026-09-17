@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using CustomerManagement.Client.Authentication;
 using CustomerManagement.Client.Models;
+using CustomerManagement.Shared.Auth;
 
 namespace CustomerManagement.Client.Services
 {

@@ -25,4 +25,8 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CustomerManagement.Shared\CustomerManagement.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

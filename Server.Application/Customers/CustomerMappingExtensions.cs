@@ -10,11 +10,12 @@ public static class CustomerMappingExtensions
         Id = customer.Id,
         CustomerCode = customer.CustomerCode,
         FullName = customer.FullName,
-        Email = customer.Email,
+        Email = customer.Email ?? string.Empty,
         PhoneNumber = customer.PhoneNumber,
-        DateOfBirth = customer.DateOfBirth,
+        DateOfBirth = customer.DateOfBirth.HasValue
+            ? customer.DateOfBirth.Value.ToDateTime(TimeOnly.MinValue)
+            : null,
         IsActive = customer.IsActive,
-        CreatedAt = customer.CreatedAt,
-        UpdatedAt = customer.UpdatedAt
+        CreatedAt = customer.CreatedAt
     };
 }

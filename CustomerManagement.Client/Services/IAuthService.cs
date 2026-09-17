@@ -1,4 +1,5 @@
 using CustomerManagement.Client.Models;
+using CustomerManagement.Shared.Auth;
 
 namespace CustomerManagement.Client.Services
 {
