@@ -1,3 +1,4 @@
+using CustomerManagement.Shared.Common;
 using CustomerManagement.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,4 +26,15 @@ public class CustomersController : ControllerBase
         var result = await _customerService.CreateAsync(request, cancellationToken);
         return StatusCode(StatusCodes.Status201Created, result);
     }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(PagedResult<CustomerDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<PagedResult<CustomerDto>>> Search(
+        [FromQuery] CustomerQueryParameters query,
+        CancellationToken cancellationToken)
+    {
+        var result = await _customerService.SearchAsync(query, cancellationToken);
+        return Ok(result);
+    }
+
 }

@@ -1,3 +1,4 @@
+using CustomerManagement.Shared.Enums;
 using Server.Domain.Entities;
 
 namespace Server.Application.Common.Interfaces;
@@ -8,4 +9,11 @@ public interface ICustomerRepository
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     Task<bool> CustomerCodeExistsAsync(string customerCode, CancellationToken cancellationToken = default);
     Task<int> GetNextCustomerCodeSequenceAsync(CancellationToken cancellationToken = default);
+    Task<(IReadOnlyList<Customer> Items, int TotalCount)> SearchAsync(
+        CustomerSearchField? searchField,
+        string? searchTerm,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default);
+
 }
