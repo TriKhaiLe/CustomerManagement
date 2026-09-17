@@ -1,26 +1,28 @@
 @page "/customers/{Id:int}/edit"
+@using CustomerManagement.Client.Resources
 @inject ICustomerService CustomerService
 @inject ISnackbar Snackbar
 @inject NavigationManager Navigation
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> L
 
-<PageTitle>Edit customer</PageTitle>
+<PageTitle>@L["Customers.EditCustomer"]</PageTitle>
 
 @if (_isLoading)
 {
-    <LoadingIndicator Message="Loading customer…" Compact="true" />
+    <LoadingIndicator Message="@L["Customers.LoadingCustomer"]" Compact="true" />
 }
 else if (_notFound)
 {
     <MudPaper Elevation="1" Class="pa-6" Style="max-width: 720px;">
         <MudStack AlignItems="AlignItems.Center" Spacing="2">
             <MudIcon Icon="@Icons.Material.Filled.PersonOff" Size="Size.Large" Color="Color.Info" />
-            <MudText Typo="Typo.h5">Customer not found</MudText>
-            <MudText Typo="Typo.body1" Color="Color.Secondary">Customer @Id does not exist, or has since been deleted.</MudText>
+            <MudText Typo="Typo.h5">@L["Customers.CustomerNotFound"]</MudText>
+            <MudText Typo="Typo.body1" Color="Color.Secondary">@string.Format(L["Customers.CustomerNotFoundDetail"], Id)</MudText>
             <MudButton Variant="Variant.Filled"
                        Color="Color.Primary"
                        StartIcon="@Icons.Material.Filled.ArrowBack"
                        OnClick="@(() => Navigation.NavigateTo("customers"))">
-                Back to customers
+                @L["Customers.BackToCustomers"]
             </MudButton>
         </MudStack>
     </MudPaper>
@@ -35,28 +37,28 @@ else if (!string.IsNullOrWhiteSpace(_loadError))
                    StartIcon="@Icons.Material.Filled.ArrowBack"
                    Class="mt-4"
                    OnClick="@(() => Navigation.NavigateTo("customers"))">
-            Back to customers
+            @L["Customers.BackToCustomers"]
         </MudButton>
     </MudPaper>
 }
 else
 {
-    <MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">Edit customer</MudText>
+    <MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@L["Customers.EditCustomer"]</MudText>
 
     <MudPaper Elevation="1" Class="pa-6" Style="max-width: 720px;">
         <ErrorAlert Message="@_error" Severity="@_errorSeverity" />
 
         <ErrorAlert Severity="Severity.Warning"
-                    Title="The server rejected this request"
+                    Title="@L["Customers.ServerRejectedTitle"]"
                     Messages="_validator.UnmappedErrors" />
 
         <MudForm @ref="_form" Model="_model">
             <MudTextField Value="_customerCode"
-                          Label="Customer code"
+                          Label="@L["Customers.CustomerCode"]"
                           Variant="Variant.Outlined"
                           Disabled="true"
                           ReadOnly="true"
-                          HelperText="Assigned at creation and cannot be changed." />
+                          HelperText="@L["Customers.AssignedCode"]" />
 
             @*
                 The code field is read-only here and absent from UpdateCustomerRequest, so it cannot be changed by the UI or by the payload.
@@ -70,7 +72,7 @@ else
                            Color="Color.Default"
                            Disabled="_isSaving"
                            OnClick="CancelAsync">
-                    Cancel
+                    @L["Customers.Cancel"]
                 </MudButton>
 
                 <MudButton Variant="Variant.Filled"
@@ -80,11 +82,11 @@ else
                     @if (_isSaving)
                     {
                         <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
-                        <span>Saving…</span>
+                        <span>@L["Customers.Saving"]</span>
                     }
                     else
                     {
-                        <span>Save changes</span>
+                        <span>@L["Customers.SaveChanges"]</span>
                     }
                 </MudButton>
             </div>
@@ -171,7 +173,7 @@ else
         try
         {
             await CustomerService.UpdateAsync(Id, _model);
-            Snackbar.Add($"Customer {_customerCode} updated.", Severity.Success);
+            Snackbar.Add(string.Format(L["Customers.CustomerUpdated"], _customerCode), Severity.Success);
             Navigation.NavigateTo("customers");
         }
         catch (ApiException e) when (e.IsValidationProblem)
@@ -181,7 +183,7 @@ else
         }
         catch (ApiException e) when (e.IsNotFound)
         {
-            Snackbar.Add($"Customer {_customerCode} no longer exists. It may have been deleted.", Severity.Warning);
+            Snackbar.Add(string.Format(L["Customers.CustomerNoLongerExists"], _customerCode), Severity.Warning);
             Navigation.NavigateTo("customers");
         }
         catch (ApiException e) when (e.IsConflict)

@@ -4,10 +4,12 @@
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 @inject NavigationManager Navigation
+@using CustomerManagement.Client.Resources
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> L
 
-<PageTitle>Customers</PageTitle>
+<PageTitle>@L["Customers.Title"]</PageTitle>
 
-<MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">Customers</MudText>
+<MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@L["Customers.Title"]</MudText>
 
 <ErrorAlert Message="@_error" OnRetry="ReloadAsync" />
 
@@ -23,64 +25,70 @@
         <MudGrid Spacing="2" Class="align-center py-2" Style="width: 100%;">
             <MudItem xs="12" md="3">
                 <MudSelect T="CustomerSearchField"
-                           @bind-Value="_searchField"
-                           Label="Search field"
-                           Variant="Variant.Outlined"
-                           Dense="true"
-                           Margin="Margin.Dense">
-                    <MudSelectItem Value="CustomerSearchField.FullName">Full name</MudSelectItem>
-                    <MudSelectItem Value="CustomerSearchField.PhoneNumber">Phone number</MudSelectItem>
-                </MudSelect>
+                               @bind-Value="_searchField"
+                               Label="@L["Customers.SearchField"]"
+                               Variant="Variant.Outlined"
+                               Dense="true"
+                               Margin="Margin.Dense">
+                        <MudSelectItem Value="CustomerSearchField.FullName">@L["Customers.FullNameSearch"]</MudSelectItem>
+                        <MudSelectItem Value="CustomerSearchField.PhoneNumber">@L["Customers.PhoneNumberSearch"]</MudSelectItem>
+                    </MudSelect>
             </MudItem>
 
-            <MudItem xs="12" md="5">
+            <MudItem xs="12" md="5" Class="pe-2">
                 <MudTextField @bind-Value="_searchTerm"
-                              Label="Search term"
+                              Label="@L["Customers.SearchTerm"]"
                               Variant="Variant.Outlined"
-                              Immediate="true"
+                              Immediate="false"
                               Margin="Margin.Dense"
                               Adornment="Adornment.Start"
                               AdornmentIcon="@Icons.Material.Filled.Search"
                               OnKeyDown="HandleSearchKeyDown" />
             </MudItem>
 
-            <MudItem xs="12" md="4" Class="d-flex align-center justify-end gap-2">
-                <MudButton Variant="Variant.Filled"
-                           Color="Color.Primary"
-                           StartIcon="@Icons.Material.Filled.Search"
-                           Disabled="_isLoading"
-                           OnClick="SearchAsync">
-                    Search
-                </MudButton>
+            <MudItem xs="12" md="4" Class="d-flex align-center justify-end ps-1">
+                <div class="d-flex align-center gap-2 flex-nowrap" style="margin-left: auto;">
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.Search"
+                               Disabled="_isLoading"
+                               Class="text-nowrap"
+                               Style="white-space: nowrap;"
+                               OnClick="SearchAsync">
+                        @L["Customers.Search"]
+                    </MudButton>
 
-                <MudButton Variant="Variant.Outlined"
-                           Color="Color.Primary"
-                           Disabled="_isLoading"
-                           OnClick="ClearAsync">
-                    Clear
-                </MudButton>
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Primary"
+                               Disabled="_isLoading"
+                               Class="text-nowrap"
+                               Style="white-space: nowrap;"
+                               OnClick="ClearAsync">
+                        @L["Customers.Clear"]
+                    </MudButton>
 
-                <MudSpacer />
-
-                <MudButton Variant="Variant.Filled"
-                           Color="Color.Secondary"
-                           StartIcon="@Icons.Material.Filled.Add"
-                           OnClick="@(() => Navigation.NavigateTo("/customers/create"))">
-                    Create
-                </MudButton>
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Secondary"
+                               StartIcon="@Icons.Material.Filled.Add"
+                               Class="text-nowrap"
+                               Style="white-space: nowrap;"
+                               OnClick="@(() => Navigation.NavigateTo("/customers/create"))">
+                        @L["Customers.Create"]
+                    </MudButton>
+                </div>
             </MudItem>
         </MudGrid>
     </ToolBarContent>
 
     <HeaderContent>
-        <MudTh>Code</MudTh>
-        <MudTh>Full name</MudTh>
-        <MudTh>Email</MudTh>
-        <MudTh>Phone</MudTh>
-        <MudTh>Date of birth</MudTh>
-        <MudTh>Status</MudTh>
-        <MudTh>Created</MudTh>
-        <MudTh Class="text-right">Actions</MudTh>
+        <MudTh>@L["Customers.Code"]</MudTh>
+        <MudTh>@L["Customers.FullName"]</MudTh>
+        <MudTh>@L["Customers.Email"]</MudTh>
+        <MudTh>@L["Customers.Phone"]</MudTh>
+        <MudTh>@L["Customers.DateOfBirth"]</MudTh>
+        <MudTh>@L["Customers.Status"]</MudTh>
+        <MudTh>@L["Customers.Created"]</MudTh>
+        <MudTh Class="text-right">@L["Customers.Actions"]</MudTh>
     </HeaderContent>
 
     <RowTemplate>
@@ -93,14 +101,14 @@
         <MudTd DataLabel="Created">@context.CreatedAt.LocalDateTime.ToString("g")</MudTd>
         <MudTd DataLabel="Actions" Class="text-right">
             <MudStack Row="true" Justify="Justify.FlexEnd" AlignItems="AlignItems.Center" Spacing="0">
-                <MudTooltip Text="Edit customer">
+                <MudTooltip Text="@L["Customers.Edit"]">
                     <MudIconButton Icon="@Icons.Material.Filled.Edit"
                                    Color="Color.Primary"
                                    aria-label="@($"Edit {context.FullName}")"
                                    OnClick="@(() => Navigation.NavigateTo($"/customers/{context.Id}/edit"))" />
                 </MudTooltip>
 
-                <MudTooltip Text="Delete customer">
+                <MudTooltip Text="@L["Customers.Delete"]">
                     <MudIconButton Icon="@Icons.Material.Filled.Delete"
                                    Color="Color.Error"
                                    aria-label="@($"Delete {context.FullName}")"
@@ -116,13 +124,13 @@
         {
             <MudStack AlignItems="AlignItems.Center" Class="py-8 px-4 text-center">
                 <MudIcon Icon="@Icons.Material.Filled.SearchOff" Size="Size.Large" Color="Color.Info" />
-                <MudText Typo="Typo.h6">No matching customers</MudText>
-                <MudText Typo="Typo.body2" Color="Color.Secondary">Nothing matched that search. Try a different term, or clear the search.</MudText>
+                <MudText Typo="Typo.h6">@L["Customers.NoMatches"]</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">@L["Customers.NoMatchesDescription"]</MudText>
                 <MudButton Variant="Variant.Outlined"
                            Color="Color.Primary"
                            StartIcon="@Icons.Material.Filled.Clear"
                            OnClick="ClearAsync">
-                    Clear search
+                    @L["Customers.Clear"]
                 </MudButton>
             </MudStack>
         }
@@ -130,20 +138,20 @@
         {
             <MudStack AlignItems="AlignItems.Center" Class="py-8 px-4 text-center">
                 <MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Large" Color="Color.Primary" />
-                <MudText Typo="Typo.h6">No customers yet</MudText>
-                <MudText Typo="Typo.body2" Color="Color.Secondary">Create your first customer to get started.</MudText>
+                <MudText Typo="Typo.h6">@L["Customers.NoCustomers"]</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">@L["Customers.NoCustomersDescription"]</MudText>
                 <MudButton Variant="Variant.Filled"
                            Color="Color.Secondary"
                            StartIcon="@Icons.Material.Filled.Add"
                            OnClick="@(() => Navigation.NavigateTo("/customers/create"))">
-                    Create customer
+                    @L["Customers.Create"]
                 </MudButton>
             </MudStack>
         }
     </NoRecordsContent>
 
     <LoadingContent>
-        <LoadingIndicator Message="Loading customers…" />
+        <LoadingIndicator Message="@L["Customers.Loading"]" />
     </LoadingContent>
 
     <PagerContent>
@@ -238,6 +246,7 @@
         _searchField = CustomerSearchField.FullName;
         _appliedSearchTerm = null;
         _appliedSearchField = CustomerSearchField.FullName;
+        await InvokeAsync(StateHasChanged);
         await ReloadFromFirstPageAsync();
     }
 
@@ -275,10 +284,10 @@
     {
         var parameters = new DialogParameters<ConfirmDialog>
         {
-            { x => x.Title, "Delete customer" },
-            { x => x.Message, $"Delete {customer.FullName}?" },
-            { x => x.Detail, $"Customer {customer.CustomerCode} will be permanently removed. This cannot be undone." },
-            { x => x.ConfirmText, "Delete" },
+            { x => x.Title, L["Customers.DeleteCustomer"] },
+            { x => x.Message, string.Format(L["Customers.DeleteCustomerQuestion"], customer.FullName) },
+            { x => x.Detail, string.Format(L["Customers.DeleteCustomerDetail"], customer.CustomerCode) },
+            { x => x.ConfirmText, L["Customers.Delete"] },
             { x => x.Color, Color.Error },
             { x => x.Icon, Icons.Material.Filled.DeleteForever }
         };
@@ -302,14 +311,14 @@
         try
         {
             await CustomerService.DeleteAsync(customer.Id);
-            Snackbar.Add($"{customer.FullName} was deleted.", Severity.Success);
+            Snackbar.Add(string.Format(L["Customers.DeleteCustomerSuccess"], customer.FullName), Severity.Success);
             await ReloadAsync();
         }
         catch (ApiException e)
         {
             if (e.IsNotFound)
             {
-                Snackbar.Add($"{customer.FullName} had already been deleted.", Severity.Info);
+                Snackbar.Add(string.Format(L["Customers.DeleteCustomerAlreadyDeleted"], customer.FullName), Severity.Info);
                 await ReloadAsync();
                 return;
             }

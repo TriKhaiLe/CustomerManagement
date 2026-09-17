@@ -1,9 +1,12 @@
+@using CustomerManagement.Client.Resources
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> L
+
 <div class="d-flex flex-column align-center justify-center @(Compact ? "py-2" : "py-3") @(Class)"
      style="@(Compact ? "gap: 0.5rem;" : "gap: 0.75rem;")">
     <MudProgressCircular Color="Color.Primary"
                          Indeterminate="true"
                          Size="@Size"
-                         aria-label="Loading" />
+                         aria-label="@L["Customers.Loading"]" />
 
     @if (!string.IsNullOrWhiteSpace(Message))
     {
@@ -12,7 +15,7 @@
 </div>
 
 @code {
-    [Parameter] public string? Message { get; set; } = "Loading…";
+    [Parameter] public string? Message { get; set; } = null;
 
     [Parameter] public Size Size { get; set; } = Size.Medium;
 

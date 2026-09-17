@@ -1,4 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@using CustomerManagement.Client.Resources
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> L
+@inject CustomerManagement.Client.Services.ILanguageService LanguageService
 
 <MudThemeProvider />
 <MudPopoverProvider />
@@ -12,8 +15,18 @@
                       Edge="Edge.Start"
                       aria-label="Toggle navigation"
                       OnClick="ToggleDrawer" />
-        <MudText Typo="Typo.h6">Customer Management</MudText>
+        <MudText Typo="Typo.h6">@L["App.Title"]</MudText>
         <MudSpacer />
+        <MudSelect T="string"
+                   Variant="Variant.Text"
+                   Dense="true"
+                   Color="Color.Inherit"
+                 Value="@LanguageService.CurrentCultureName"
+                 ValueChanged="ChangeLanguageAsync"
+                 AriaLabel='@L["Language.Select"]'>
+                    <MudSelectItem Value="@("vi-VN")">@L["Language.Vietnamese"]</MudSelectItem>
+                    <MudSelectItem Value="@("en-US")">@L["Language.English"]</MudSelectItem>
+        </MudSelect>
 
         <AuthorizeView>
             <Authorized>
@@ -40,5 +53,14 @@
     private void ToggleDrawer()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    private async Task ChangeLanguageAsync(string cultureName)
+    {
+        if (string.IsNullOrWhiteSpace(cultureName)) return;
+        if (cultureName != "vi-VN" && cultureName != "en-US") return;
+
+        await LanguageService.SetCultureAsync(cultureName);
+        StateHasChanged();
     }
 }

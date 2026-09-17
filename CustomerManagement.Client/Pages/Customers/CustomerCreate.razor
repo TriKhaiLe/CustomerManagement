@@ -1,31 +1,33 @@
 @page "/customers/create"
+@using CustomerManagement.Client.Resources
 @inject ICustomerService CustomerService
 @inject ISnackbar Snackbar
 @inject NavigationManager Navigation
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> L
 
-<PageTitle>New customer</PageTitle>
+<PageTitle>@L["Customers.New"]</PageTitle>
 
-<MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">New customer</MudText>
+<MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@L["Customers.New"]</MudText>
 
 <MudPaper Elevation="1" Class="pa-6" Style="max-width: 720px;">
     <ErrorAlert Message="@_error" Severity="@_errorSeverity" />
 
     <ErrorAlert Severity="Severity.Warning"
-                Title="The server rejected this request"
+                Title="@L["Customers.ServerRejectedTitle"]"
                 Messages="_validator.UnmappedErrors" />
 
     <MudForm @ref="_form" Model="_model">
         <MudTextField @bind-Value="_model.CustomerCode"
                       For="@(() => _model.CustomerCode)"
                       Validation="@_validator.Validate"
-                      Label="Customer code"
+                      Label="@L["Customers.CustomerCode"]"
                       Variant="Variant.Outlined"
                       Immediate="true"
                       Disabled="_isSaving"
                       Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Tag"
                       AdornmentColor="Color.Default"
-                      HelperText="Optional. Leave blank and the server assigns one." />
+                      HelperText="@L["Customers.CustomerCodeHelper"]" />
 
         <CustomerFormFields Model="_model"
                             Validator="_validator.Validate"
@@ -36,7 +38,7 @@
                        Color="Color.Default"
                        Disabled="_isSaving"
                        OnClick="CancelAsync">
-                Cancel
+                @L["Customers.Cancel"]
             </MudButton>
 
             <MudButton Variant="Variant.Filled"
@@ -46,11 +48,11 @@
                 @if (_isSaving)
                 {
                     <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
-                    <span>Creating…</span>
+                    <span>@L["Customers.Creating"]</span>
                 }
                 else
                 {
-                    <span>Create customer</span>
+                    <span>@L["Customers.CreateAction"]</span>
                 }
             </MudButton>
         </div>

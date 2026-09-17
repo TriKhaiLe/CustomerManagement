@@ -1,8 +1,10 @@
+using System.Globalization;
 using CustomerManagement.Client.Authentication;
 using CustomerManagement.Client.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using MudBlazor;
 using MudBlazor.Services;
 
@@ -12,6 +14,12 @@ namespace CustomerManagement.Client
     {
         public static async Task Main(string[] args)
         {
+            var defaultCulture = new CultureInfo("vi-VN");
+            CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
+            CultureInfo.CurrentCulture = defaultCulture;
+            CultureInfo.CurrentUICulture = defaultCulture;
+
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
@@ -62,6 +70,8 @@ namespace CustomerManagement.Client
                 config.SnackbarConfiguration.VisibleStateDuration = 4000;
                 config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
             });
+            builder.Services.AddLocalization();
+            builder.Services.AddScoped<ILanguageService, LanguageService>();
             var host = builder.Build();
 
             // If the client is configured for testing mode, create a fake session

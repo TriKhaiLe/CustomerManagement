@@ -4,12 +4,14 @@
 @inject IAuthService AuthService
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@using CustomerManagement.Client.Resources
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> L
 
 <MudPaper Elevation="4" Class="pa-8" Style="width: 100%; max-width: 420px;">
     <div class="d-flex flex-column align-center mb-6">
         <MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Large" Color="Color.Primary" />
-        <MudText Typo="Typo.h5" Class="mt-3">Customer Management</MudText>
-        <MudText Typo="Typo.body1" Color="Color.Secondary">Sign in to continue</MudText>
+        <MudText Typo="Typo.h5" Class="mt-3">@L["App.Title"]</MudText>
+        <MudText Typo="Typo.body1" Color="Color.Secondary">@L["Login.SignInToContinue"]</MudText>
     </div>
 
     @if (!string.IsNullOrWhiteSpace(_error))
@@ -21,10 +23,10 @@
         <MudStack Spacing="3">
             <MudTextField @bind-Value="_model.Username"
                           For="@(() => _model.Username)"
-                          Label="Username"
+                          Label="@L["Login.Username"]"
                           Variant="Variant.Outlined"
                           Required="true"
-                          RequiredError="Username is required."
+                          RequiredError="@L["Login.UsernameRequired"]"
                           Immediate="true"
                           Disabled="_busy"
                           Adornment="Adornment.Start"
@@ -35,17 +37,17 @@
 
             <MudTextField @bind-Value="_model.Password"
                           For="@(() => _model.Password)"
-                          Label="Password"
+                          Label="@L["Login.Password"]"
                           Variant="Variant.Outlined"
                           Required="true"
-                          RequiredError="Password is required."
+                          RequiredError="@L["Login.PasswordRequired"]"
                           Immediate="true"
                           Disabled="_busy"
                           InputType="_showPassword ? InputType.Text : InputType.Password"
                           Adornment="Adornment.End"
                           AdornmentIcon="@(_showPassword ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
                           OnAdornmentClick="TogglePasswordVisibility"
-                          AdornmentAriaLabel="@(_showPassword ? "Hide password" : "Show password")"
+                          AdornmentAriaLabel="@(_showPassword ? L["Login.HidePassword"] : L["Login.ShowPassword"])"
                           autocomplete="current-password"
                           OnKeyDown="OnKeyDown" />
 
@@ -54,14 +56,14 @@
                        FullWidth="true"
                        Disabled="_busy"
                        OnClick="SubmitAsync">
-                @if (_busy)
+                    @if (_busy)
                 {
                     <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
-                    <span>Signing in…</span>
+                    <span>@L["Login.SigningIn"]</span>
                 }
                 else
                 {
-                    <span>Login</span>
+                    <span>@L["Login.Login"]</span>
                 }
             </MudButton>
         </MudStack>
@@ -118,17 +120,17 @@
                 return;
             }
 
-            _error = result.Error ?? "Unable to sign in. Please try again.";
+            _error = result.Error ?? L["Login.GenericError"];
             _model.Password = string.Empty;
         }
         catch (HttpRequestException)
         {
-            _error = "Cannot reach the server. Check your connection and try again.";
+            _error = L["Login.CannotReachServer"];
             _model.Password = string.Empty;
         }
         catch (TaskCanceledException)
         {
-            _error = "The request timed out. Please try again.";
+            _error = L["Login.RequestTimedOut"];
             _model.Password = string.Empty;
         }
         finally

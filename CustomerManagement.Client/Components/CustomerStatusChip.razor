@@ -1,9 +1,12 @@
+@using CustomerManagement.Client.Resources
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> L
+
 <MudChip T="string"
          Color="@(IsActive ? Color.Success : Color.Default)"
          Variant="Variant.Filled"
          Size="@Size"
          Class="@Class">
-    @(IsActive ? "Active" : "Inactive")
+    @(IsActive ? L["Customers.Active"] : L["Customers.Inactive"])
 </MudChip>
 
 @code {

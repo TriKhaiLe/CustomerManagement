@@ -6,7 +6,6 @@ namespace CustomerManagement.Shared;
 public sealed class NotInTheFutureAttribute : ValidationAttribute
 {
     public NotInTheFutureAttribute()
-        : base("The date cannot be in the future.")
     {
     }
 

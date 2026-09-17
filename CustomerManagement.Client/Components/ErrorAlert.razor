@@ -1,3 +1,6 @@
+@using CustomerManagement.Client.Resources
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> L
+
 @if (HasContent)
 {
     <MudAlert Severity="@Severity"
@@ -52,7 +55,7 @@
 
     [Parameter] public EventCallback OnRetry { get; set; }
 
-    [Parameter] public string RetryText { get; set; } = "Retry";
+    [Parameter] public string RetryText { get; set; } = default!;
 
     [Parameter] public string? Class { get; set; }
 
@@ -60,4 +63,12 @@
         !string.IsNullOrWhiteSpace(Title)
         || !string.IsNullOrWhiteSpace(Message)
         || Messages is { Count: > 0 } && Messages.Any(m => !string.IsNullOrWhiteSpace(m));
+
+    protected override void OnParametersSet()
+    {
+        if (string.IsNullOrWhiteSpace(RetryText))
+        {
+            RetryText = L["Common.Retry"];
+        }
+    }
 }

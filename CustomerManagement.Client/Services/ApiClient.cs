@@ -15,9 +15,12 @@ namespace CustomerManagement.Client.Services
             Converters = { new JsonStringEnumConverter() }
         };
 
-        public ApiClient(HttpClient httpClient)
+        private readonly Microsoft.Extensions.Localization.IStringLocalizer<CustomerManagement.Client.Resources.SharedResource> _localizer;
+
+        public ApiClient(HttpClient httpClient, Microsoft.Extensions.Localization.IStringLocalizer<CustomerManagement.Client.Resources.SharedResource> localizer)
         {
             HttpClient = httpClient;
+            _localizer = localizer;
         }
 
         public HttpClient HttpClient { get; }
@@ -67,7 +70,7 @@ namespace CustomerManagement.Client.Services
             return JsonContent.Create(payload, payload.GetType(), options: SerializerOptions);
         }
 
-        private static async Task<HttpResponseMessage> SendAsync(Func<Task<HttpResponseMessage>> send, CancellationToken ct)
+        private async Task<HttpResponseMessage> SendAsync(Func<Task<HttpResponseMessage>> send, CancellationToken ct)
         {
             try
             {
@@ -75,15 +78,15 @@ namespace CustomerManagement.Client.Services
             }
             catch (HttpRequestException e)
             {
-                throw new ApiException(null, "Cannot reach the server. Check your connection and try again.", innerException: e);
+                throw new ApiException(null, _localizer["Api.NetworkError"], innerException: e);
             }
             catch (TaskCanceledException e) when (!ct.IsCancellationRequested)
             {
-                throw new ApiException(null, "The request timed out. Please try again.", innerException: e);
+                throw new ApiException(null, _localizer["Api.Timeout"], innerException: e);
             }
         }
 
-        private static async Task ThrowIfFailedAsync(HttpResponseMessage response, CancellationToken ct)
+        private async Task ThrowIfFailedAsync(HttpResponseMessage response, CancellationToken ct)
         {
             if (response.IsSuccessStatusCode)
             {
@@ -95,7 +98,7 @@ namespace CustomerManagement.Client.Services
             throw new ApiException(statusCode, BuildMessage(statusCode, error), error);
         }
 
-        private static async Task<ApiErrorResponse?> ReadErrorAsync(HttpResponseMessage response, CancellationToken ct)
+        private async Task<ApiErrorResponse?> ReadErrorAsync(HttpResponseMessage response, CancellationToken ct)
         {
             if (response.Content is null || response.Content.Headers.ContentLength == 0)
             {
@@ -126,33 +129,33 @@ namespace CustomerManagement.Client.Services
             }
         }
 
-        private static async Task<TResponse> ReadAsync<TResponse>(HttpResponseMessage response, CancellationToken ct)
+        private async Task<TResponse> ReadAsync<TResponse>(HttpResponseMessage response, CancellationToken ct)
         {
             try
             {
                 var payload = await response.Content.ReadFromJsonAsync<TResponse>(SerializerOptions, ct);
                 if (payload is null)
                 {
-                    throw new ApiException(response.StatusCode, "The server returned an empty response.");
+                    throw new ApiException(response.StatusCode, _localizer["Api.EmptyResponse"]);
                 }
 
                 return payload;
             }
             catch (JsonException)
             {
-                throw new ApiException(response.StatusCode, "The server returned a response this app could not read.");
+                throw new ApiException(response.StatusCode, _localizer["Api.CannotReadResponse"]);
             }
             catch (NotSupportedException)
             {
-                throw new ApiException(response.StatusCode, "The server returned a response this app could not read.");
+                throw new ApiException(response.StatusCode, _localizer["Api.CannotReadResponse"]);
             }
         }
 
-        private static string BuildMessage(HttpStatusCode statusCode, ApiErrorResponse? error)
+        private string BuildMessage(HttpStatusCode statusCode, ApiErrorResponse? error)
         {
             if (statusCode >= HttpStatusCode.InternalServerError)
             {
-                return "The server had a problem completing that request. Please try again.";
+                return _localizer["Api.ServerError"];
             }
 
             var summary = error?.GetSummary();
@@ -163,12 +166,12 @@ namespace CustomerManagement.Client.Services
 
             return statusCode switch
             {
-                HttpStatusCode.BadRequest => "The request was rejected as invalid.",
-                HttpStatusCode.Unauthorized => "Your session has expired. Please sign in again.",
-                HttpStatusCode.Forbidden => "You do not have permission to perform this action.",
-                HttpStatusCode.NotFound => "The requested item was not found.",
-                HttpStatusCode.Conflict => "That change conflicts with the current data. Reload and try again.",
-                _ => $"The server returned {(int)statusCode} ({statusCode})."
+                HttpStatusCode.BadRequest => _localizer["Api.BadRequest"],
+                HttpStatusCode.Unauthorized => _localizer["Api.Unauthorized"],
+                HttpStatusCode.Forbidden => _localizer["Api.Forbidden"],
+                HttpStatusCode.NotFound => _localizer["Api.NotFound"],
+                HttpStatusCode.Conflict => _localizer["Api.Conflict"],
+                _ => _localizer["Api.UnknownStatus", (int)statusCode, statusCode]
             };
         }
     }

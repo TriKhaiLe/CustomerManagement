@@ -1,3 +1,6 @@
+@using CustomerManagement.Client.Resources
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> L
+
 <MudDialog>
     <TitleContent>
         <MudStack Row="true" AlignItems="AlignItems.Center" Class="me-2">
@@ -28,15 +31,15 @@
 @code {
     [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = default!;
 
-    [Parameter] public string Title { get; set; } = "Are you sure?";
+    [Parameter] public string Title { get; set; } = default!;
 
     [Parameter, EditorRequired] public string Message { get; set; } = default!;
 
     [Parameter] public string? Detail { get; set; }
 
-    [Parameter] public string ConfirmText { get; set; } = "Confirm";
+    [Parameter] public string ConfirmText { get; set; } = default!;
 
-    [Parameter] public string CancelText { get; set; } = "Cancel";
+    [Parameter] public string CancelText { get; set; } = default!;
 
     [Parameter] public Color Color { get; set; } = Color.Primary;
 
@@ -50,5 +53,23 @@
     private void Cancel()
     {
         Dialog.Cancel();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (string.IsNullOrWhiteSpace(Title))
+        {
+            Title = L["Confirm.Confirm"];
+        }
+
+        if (string.IsNullOrWhiteSpace(ConfirmText))
+        {
+            ConfirmText = L["Common.Confirm"];
+        }
+
+        if (string.IsNullOrWhiteSpace(CancelText))
+        {
+            CancelText = L["Common.Close"];
+        }
     }
 }

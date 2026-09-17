@@ -12,12 +12,15 @@ namespace CustomerManagement.Client.Services
         private readonly IApiClient _apiClient;
         private readonly ITokenStore _tokenStore;
         private readonly JwtAuthenticationStateProvider _stateProvider;
+        private readonly Microsoft.Extensions.Localization.IStringLocalizer<CustomerManagement.Client.Resources.SharedResource> _localizer;
 
-        public AuthService(IApiClient apiClient, ITokenStore tokenStore, JwtAuthenticationStateProvider stateProvider)
+        public AuthService(IApiClient apiClient, ITokenStore tokenStore, JwtAuthenticationStateProvider stateProvider,
+            Microsoft.Extensions.Localization.IStringLocalizer<CustomerManagement.Client.Resources.SharedResource> localizer)
         {
             _apiClient = apiClient;
             _tokenStore = tokenStore;
             _stateProvider = stateProvider;
+            _localizer = localizer;
         }
 
         public async Task<LoginResult> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
@@ -33,19 +36,19 @@ namespace CustomerManagement.Client.Services
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                return LoginResult.Failure("Invalid username or password.");
+                return LoginResult.Failure(_localizer["Auth.InvalidCredentials"]);
             }
 
             if (!response.IsSuccessStatusCode)
             {
-                return LoginResult.Failure($"Login failed with status {(int)response.StatusCode}.");
+                return LoginResult.Failure(_localizer["Auth.LoginFailedWithStatus", (int)response.StatusCode]);
             }
 
             var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>(cancellationToken: cancellationToken);
 
             if (loginResponse is null || string.IsNullOrWhiteSpace(loginResponse.AccessToken))
             {
-                return LoginResult.Failure("Login response did not contain an access token.");
+                return LoginResult.Failure(_localizer["Auth.MissingAccessToken"]);
             }
 
             var session = new AuthSession

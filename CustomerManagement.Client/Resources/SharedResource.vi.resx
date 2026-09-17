@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
+
+  <!-- App -->
+  <data name="App.Title"><value>Quản lý khách hàng</value></data>
+
+  <!-- Language selector -->
+  <data name="Language.Select"><value>Ngôn ngữ</value></data>
+  <data name="Language.English"><value>English</value></data>
+  <data name="Language.Vietnamese"><value>Tiếng Việt</value></data>
+
+  <!-- Login -->
+  <data name="Login.SignInToContinue"><value>Đăng nhập để tiếp tục</value></data>
+  <data name="Login.Username"><value>Tên đăng nhập</value></data>
+  <data name="Login.Password"><value>Mật khẩu</value></data>
+  <data name="Login.UsernameRequired"><value>Vui lòng nhập tên đăng nhập.</value></data>
+  <data name="Login.PasswordRequired"><value>Vui lòng nhập mật khẩu.</value></data>
+  <data name="Login.ShowPassword"><value>Hiện mật khẩu</value></data>
+  <data name="Login.HidePassword"><value>Ẩn mật khẩu</value></data>
+  <data name="Login.SigningIn"><value>Đang đăng nhập…</value></data>
+  <data name="Login.Login"><value>Đăng nhập</value></data>
+  <data name="Login.CannotReachServer"><value>Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối và thử lại.</value></data>
+  <data name="Login.RequestTimedOut"><value>Yêu cầu đã hết thời gian chờ. Vui lòng thử lại.</value></data>
+  <data name="Login.GenericError"><value>Không thể đăng nhập. Vui lòng thử lại.</value></data>
+
+  <!-- Navigation -->
+  <data name="Navigation.Customers"><value>Khách hàng</value></data>
+  <data name="Navigation.Logout"><value>Đăng xuất</value></data>
+
+  <!-- CUSTOMER LIST -->
+  <data name="Customers.Title"><value>Khách hàng</value></data>
+  <data name="Customers.Code"><value>Mã khách hàng</value></data>
+  <data name="Customers.FullName"><value>Họ và tên</value></data>
+  <data name="Customers.Email"><value>Email</value></data>
+  <data name="Customers.Phone"><value>Số điện thoại</value></data>
+  <data name="Customers.DateOfBirth"><value>Ngày sinh</value></data>
+  <data name="Customers.Status"><value>Trạng thái</value></data>
+  <data name="Customers.Created"><value>Ngày tạo</value></data>
+  <data name="Customers.Actions"><value>Thao tác</value></data>
+  <data name="Customers.Active"><value>Đang hoạt động</value></data>
+  <data name="Customers.Inactive"><value>Không hoạt động</value></data>
+  <data name="Customers.SearchField"><value>Trường tìm kiếm</value></data>
+  <data name="Customers.SearchTerm"><value>Từ khóa tìm kiếm</value></data>
+  <data name="Customers.FullNameSearch"><value>Họ và tên</value></data>
+  <data name="Customers.PhoneNumberSearch"><value>Số điện thoại</value></data>
+  <data name="Customers.Search"><value>Tìm kiếm</value></data>
+  <data name="Customers.Clear"><value>Xóa</value></data>
+  <data name="Customers.Create"><value>Tạo khách hàng</value></data>
+  <data name="Customers.Edit"><value>Chỉnh sửa</value></data>
+  <data name="Customers.Delete"><value>Xóa</value></data>
+  <data name="Customers.DeleteCustomer"><value>Xóa khách hàng</value></data>
+  <data name="Customers.DeleteCustomerQuestion"><value>Xóa {0}?</value></data>
+  <data name="Customers.DeleteCustomerDetail"><value>Khách hàng {0} sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.</value></data>
+  <data name="Customers.DeleteCustomerSuccess"><value>{0} đã được xóa.</value></data>
+  <data name="Customers.DeleteCustomerAlreadyDeleted"><value>{0} đã được xóa trước đó.</value></data>
+  <data name="Customers.NoMatches"><value>Không tìm thấy khách hàng phù hợp</value></data>
+  <data name="Customers.NoMatchesDescription"><value>Không có dữ liệu phù hợp. Hãy thử từ khóa khác hoặc xóa bộ lọc tìm kiếm.</value></data>
+  <data name="Customers.NoCustomers"><value>Chưa có khách hàng</value></data>
+  <data name="Customers.NoCustomersDescription"><value>Hãy tạo khách hàng đầu tiên để bắt đầu.</value></data>
+  <data name="Customers.Loading"><value>Đang tải khách hàng…</value></data>
+
+  <!-- CUSTOMER FORM -->
+  <data name="Customers.New"><value>Khách hàng mới</value></data>
+  <data name="Customers.EditCustomer"><value>Chỉnh sửa khách hàng</value></data>
+  <data name="Customers.CustomerNotFound"><value>Không tìm thấy khách hàng</value></data>
+  <data name="Customers.CustomerNotFoundDetail"><value>Khách hàng {0} không tồn tại hoặc đã bị xóa.</value></data>
+  <data name="Customers.BackToCustomers"><value>Quay lại khách hàng</value></data>
+  <data name="Customers.LoadingCustomer"><value>Đang tải khách hàng…</value></data>
+  <data name="Customers.CustomerCode"><value>Mã khách hàng</value></data>
+  <data name="Customers.CustomerCodeHelper"><value>Không bắt buộc. Để trống nếu muốn máy chủ tự tạo mã.</value></data>
+  <data name="Customers.Optional"><value>Không bắt buộc.</value></data>
+  <data name="Customers.DateOfBirthHelper"><value>Không bắt buộc.</value></data>
+  <data name="Customers.ActiveToggle"><value>Đang hoạt động</value></data>
+  <data name="Customers.CreateAction"><value>Tạo khách hàng</value></data>
+  <data name="Customers.Creating"><value>Đang tạo…</value></data>
+  <data name="Customers.SaveChanges"><value>Lưu thay đổi</value></data>
+  <data name="Customers.Saving"><value>Đang lưu…</value></data>
+  <data name="Customers.Cancel"><value>Hủy</value></data>
+  <data name="Customers.AssignedCode"><value>Được cấp khi tạo và không thể thay đổi.</value></data>
+  <data name="Customers.ServerRejectedTitle"><value>Máy chủ từ chối yêu cầu</value></data>
+  <data name="Customers.CustomerUpdated"><value>Khách hàng {0} đã được cập nhật.</value></data>
+  <data name="Customers.CustomerNoLongerExists"><value>Khách hàng {0} không còn tồn tại. Có thể đã bị xóa.</value></data>
+
+  <!-- CONFIRM / COMMON -->
+  <data name="Common.Retry"><value>Thử lại</value></data>
+  <data name="Common.Confirm"><value>Xác nhận</value></data>
+  <data name="Common.Close"><value>Đóng</value></data>
+  <data name="Confirm.Confirm"><value>Xác nhận</value></data>
+  <data name="Confirm.Cancel"><value>Hủy</value></data>
+
+  <!-- Auth / Api -->
+  <data name="Auth.InvalidCredentials"><value>Tên đăng nhập hoặc mật khẩu không đúng.</value></data>
+  <data name="Auth.LoginFailedWithStatus"><value>Đăng nhập thất bại với mã trạng thái {0}.</value></data>
+  <data name="Auth.MissingAccessToken"><value>Phản hồi đăng nhập không chứa access token.</value></data>
+
+  <data name="Api.ServerError"><value>Máy chủ gặp sự cố khi xử lý yêu cầu. Vui lòng thử lại.</value></data>
+  <data name="Api.CannotReadResponse"><value>Máy chủ trả về phản hồi mà ứng dụng không thể đọc.</value></data>
+  <data name="Api.EmptyResponse"><value>Máy chủ trả về phản hồi rỗng.</value></data>
+  <data name="Api.BadRequest"><value>Yêu cầu không hợp lệ và đã bị từ chối.</value></data>
+  <data name="Api.Unauthorized"><value>Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.</value></data>
+  <data name="Api.Forbidden"><value>Bạn không có quyền thực hiện thao tác này.</value></data>
+  <data name="Api.NotFound"><value>Không tìm thấy dữ liệu được yêu cầu.</value></data>
+  <data name="Api.Conflict"><value>Thay đổi này xung đột với dữ liệu hiện tại. Hãy tải lại và thử lại.</value></data>
+  <data name="Api.UnknownStatus"><value>Máy chủ trả về {0} ({1}).</value></data>
+  <data name="Api.NetworkError"><value>Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối và thử lại.</value></data>
+  <data name="Api.Timeout"><value>Yêu cầu đã hết thời gian chờ. Vui lòng thử lại.</value></data>
+
+</root>
