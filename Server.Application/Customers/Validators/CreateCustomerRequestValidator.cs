@@ -1,0 +1,34 @@
+using CustomerManagement.Shared.DTOs;
+using FluentValidation;
+
+namespace Server.Application.Customers.Validators;
+
+public class CreateCustomerRequestValidator : AbstractValidator<CreateCustomerRequest>
+{
+    public CreateCustomerRequestValidator()
+    {
+        RuleFor(x => x.CustomerCode)
+            .MaximumLength(20).WithMessage("Customer code must not exceed 20 characters.")
+            .Matches(@"^[A-Za-z0-9\-]+$").WithMessage("Customer code may only contain letters, digits and hyphens.")
+            .When(x => !string.IsNullOrWhiteSpace(x.CustomerCode));
+
+        RuleFor(x => x.FullName)
+            .NotEmpty().WithMessage("Full name is required.")
+            .MaximumLength(150).WithMessage("Full name must not exceed 150 characters.");
+
+        RuleFor(x => x.Email)
+            .EmailAddress().WithMessage("Email is not a valid email address.")
+            .MaximumLength(255).WithMessage("Email must not exceed 255 characters.")
+            .When(x => !string.IsNullOrWhiteSpace(x.Email));
+
+        RuleFor(x => x.PhoneNumber)
+            .NotEmpty().WithMessage("Phone number is required.")
+            .MaximumLength(15).WithMessage("Phone number must not exceed 15 characters.")
+            .Matches(@"^[0-9]+$").WithMessage("Phone number must contain numbers only.");
+
+        RuleFor(x => x.DateOfBirth)
+            .Must(dob => dob!.Value <= DateOnly.FromDateTime(DateTime.UtcNow))
+            .WithMessage("Date of birth cannot be in the future.")
+            .When(x => x.DateOfBirth.HasValue);
+    }
+}

@@ -1,5 +1,7 @@
 
+using Server.Api.Middleware;
 using Server.Infrastructure;
+using Server.Application;
 
 namespace Server.Api
 {
@@ -11,11 +13,15 @@ namespace Server.Api
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
+            
+            builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
 
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
