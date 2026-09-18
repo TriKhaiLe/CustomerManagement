@@ -22,7 +22,7 @@ public class UpdateCustomerRequestValidator : AbstractValidator<UpdateCustomerRe
             .Matches(@"^[0-9]+$").WithMessage("Phone number must contain numbers only.");
 
         RuleFor(x => x.DateOfBirth)
-            .Must(dob => dob!.Value <= DateOnly.FromDateTime(DateTime.UtcNow))
+            .Must(dob => !dob.HasValue || dob.Value.Date <= DateTime.Today)
             .WithMessage("Date of birth cannot be in the future.")
             .When(x => x.DateOfBirth.HasValue);
     }

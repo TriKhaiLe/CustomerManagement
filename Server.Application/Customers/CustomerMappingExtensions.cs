@@ -16,6 +16,7 @@ public static class CustomerMappingExtensions
             ? customer.DateOfBirth.Value.ToDateTime(TimeOnly.MinValue)
             : null,
         IsActive = customer.IsActive,
-        CreatedAt = customer.CreatedAt
+        CreatedAt = customer.CreatedAt,
+        UpdatedAt = customer.UpdatedAt
     };
 }

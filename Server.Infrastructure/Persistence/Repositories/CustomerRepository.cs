@@ -1,4 +1,4 @@
-using CustomerManagement.Shared.Enums;
+using CustomerManagement.Shared.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Server.Application.Common.Interfaces;
 using Server.Domain.Common;

@@ -1,4 +1,4 @@
-using CustomerManagement.Shared.Common;
+using CustomerManagement.Shared;
 using CustomerManagement.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

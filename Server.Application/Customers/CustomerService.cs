@@ -77,16 +77,19 @@ public class CustomerService : ICustomerService
         var (items, totalCount) = await _repository.SearchAsync(
             query.SearchField,
             query.SearchTerm,
-            query.Page,
+            query.PageNumber,
             query.PageSize,
             cancellationToken);
 
         return new PagedResult<CustomerDto>
         {
             Items = items.Select(c => c.ToDto()).ToList(),
-            Page = query.Page,
+            PageNumber = query.PageNumber,
             PageSize = query.PageSize,
-            TotalCount = totalCount
+            TotalCount = totalCount,
+            TotalPages = query.PageSize > 0 ? (int)Math.Ceiling((double)totalCount / query.PageSize) : 0,
+            HasPreviousPage = query.PageNumber > 1,
+            HasNextPage = query.PageNumber * query.PageSize < totalCount
         };
     }
 
@@ -112,7 +115,9 @@ public class CustomerService : ICustomerService
         customer.FullName = request.FullName.Trim();
         customer.Email = string.IsNullOrWhiteSpace(request.Email) ? null : request.Email.Trim();
         customer.PhoneNumber = request.PhoneNumber.Trim();
-        customer.DateOfBirth = request.DateOfBirth;
+        customer.DateOfBirth = request.DateOfBirth.HasValue
+            ? DateOnly.FromDateTime(request.DateOfBirth.Value)
+            : null;
         customer.IsActive = request.IsActive;
         customer.UpdatedAt = DateTime.UtcNow;
 

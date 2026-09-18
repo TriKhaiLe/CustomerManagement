@@ -11,13 +11,32 @@ namespace Server.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+                });
             builder.Services.AddEndpointsApiExplorer();
             
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
 
             builder.Services.AddSwaggerGen();
+
+            // CORS — read allowed origins from configuration
+            var allowedOrigins = builder.Configuration
+                .GetSection("Cors:AllowedOrigins")
+                .Get<string[]>() ?? [];
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.WithOrigins(allowedOrigins)
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
 
             var app = builder.Build();
             app.UseMiddleware<ExceptionHandlingMiddleware>();
@@ -31,6 +50,8 @@ namespace Server.Api
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors();
 
             app.UseAuthorization();
 
