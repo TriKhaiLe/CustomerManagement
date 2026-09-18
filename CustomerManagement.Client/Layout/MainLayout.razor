@@ -17,7 +17,8 @@
                       OnClick="ToggleDrawer" />
         <MudText Typo="Typo.h6">@L["App.Title"]</MudText>
         <MudSpacer />
-        <MudSelect T="string"
+        <div class="d-flex me-2">
+            <MudSelect id="language-select" T="string" Class="wd-100px"
                    Variant="Variant.Text"
                    Dense="true"
                    Color="Color.Inherit"
@@ -26,7 +27,8 @@
                  AriaLabel='@L["Language.Select"]'>
                     <MudSelectItem Value="@("vi-VN")">@L["Language.Vietnamese"]</MudSelectItem>
                     <MudSelectItem Value="@("en-US")">@L["Language.English"]</MudSelectItem>
-        </MudSelect>
+            </MudSelect>
+        </div>        
 
         <AuthorizeView>
             <Authorized>

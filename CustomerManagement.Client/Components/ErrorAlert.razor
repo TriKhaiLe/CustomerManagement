@@ -60,9 +60,8 @@
     [Parameter] public string? Class { get; set; }
 
     private bool HasContent =>
-        !string.IsNullOrWhiteSpace(Title)
-        || !string.IsNullOrWhiteSpace(Message)
-        || Messages is { Count: > 0 } && Messages.Any(m => !string.IsNullOrWhiteSpace(m));
+        !string.IsNullOrWhiteSpace(Message)
+        || (Messages is { Count: > 0 } && Messages.Any(m => !string.IsNullOrWhiteSpace(m)));
 
     protected override void OnParametersSet()
     {
