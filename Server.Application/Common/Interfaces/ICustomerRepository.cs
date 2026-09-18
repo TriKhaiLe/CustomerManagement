@@ -16,5 +16,6 @@ public interface ICustomerRepository
         int page,
         int pageSize,
         CancellationToken cancellationToken = default);
-
+    void Update(Customer customer);
+    void Remove(Customer customer);
 }
