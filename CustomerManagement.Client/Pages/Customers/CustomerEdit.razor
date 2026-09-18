@@ -43,7 +43,7 @@ else if (!string.IsNullOrWhiteSpace(_loadError))
 }
 else
 {
-    <MudText Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@L["Customers.EditCustomer"]</MudText>
+    <MudText Class="pt-4" Typo="Typo.h4" HtmlTag="h1" GutterBottom="true">@L["Customers.EditCustomer"]</MudText>
 
     <MudPaper Elevation="1" Class="pa-6" Style="max-width: 720px;">
         <ErrorAlert Message="@_error" Severity="@_errorSeverity" />

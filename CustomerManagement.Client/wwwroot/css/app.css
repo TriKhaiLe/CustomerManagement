@@ -68,3 +68,11 @@ h1:focus {
 .loading-progress-text:after {
     content: var(--blazor-load-percentage-text, "Loading");
 }
+
+.wd-100px {
+    width: 100px;
+}
+
+#language-select + .mud-input-root-text {
+    color: white;
+}
