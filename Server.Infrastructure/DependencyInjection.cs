@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Server.Application.Auth;
 using Server.Application.Common.Interfaces;
+using Server.Infrastructure.Auth;
 using Server.Infrastructure.Persistence;
 using Server.Infrastructure.Persistence.Repositories;
 
@@ -17,6 +19,7 @@ public static class DependencyInjection
                 sql => sql.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)));
 
         services.AddScoped<ICustomerRepository, CustomerRepository>();
+        services.AddScoped<IAuthService, AuthService>();
 
         return services;
     }

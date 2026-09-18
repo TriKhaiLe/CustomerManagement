@@ -1,0 +1,75 @@
+@using CustomerManagement.Client.Resources
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> L
+
+<MudDialog>
+    <TitleContent>
+        <MudStack Row="true" AlignItems="AlignItems.Center" Class="me-2">
+            <MudIcon Icon="@Icon" Color="@Color" />
+            <MudText Typo="Typo.h6">@Title</MudText>
+        </MudStack>
+    </TitleContent>
+
+    <DialogContent>
+        <MudText>@Message</MudText>
+
+        @if (!string.IsNullOrWhiteSpace(Detail))
+        {
+            <MudText Typo="Typo.body2" Class="mud-text-secondary mt-2">@Detail</MudText>
+        }
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="Cancel" Variant="Variant.Text">@CancelText</MudButton>
+        <MudButton Color="@Color"
+                   Variant="Variant.Filled"
+                   OnClick="Confirm">
+            @ConfirmText
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = default!;
+
+    [Parameter] public string Title { get; set; } = default!;
+
+    [Parameter, EditorRequired] public string Message { get; set; } = default!;
+
+    [Parameter] public string? Detail { get; set; }
+
+    [Parameter] public string ConfirmText { get; set; } = default!;
+
+    [Parameter] public string CancelText { get; set; } = default!;
+
+    [Parameter] public Color Color { get; set; } = Color.Primary;
+
+    [Parameter] public string Icon { get; set; } = Icons.Material.Filled.HelpOutline;
+
+    private void Confirm()
+    {
+        Dialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel()
+    {
+        Dialog.Cancel();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (string.IsNullOrWhiteSpace(Title))
+        {
+            Title = L["Confirm.Confirm"];
+        }
+
+        if (string.IsNullOrWhiteSpace(ConfirmText))
+        {
+            ConfirmText = L["Common.Confirm"];
+        }
+
+        if (string.IsNullOrWhiteSpace(CancelText))
+        {
+            CancelText = L["Common.Close"];
+        }
+    }
+}

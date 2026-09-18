@@ -1,4 +1,4 @@
-using CustomerManagement.Shared.Enums;
+using CustomerManagement.Shared.DTOs;
 using Server.Domain.Entities;
 
 namespace Server.Application.Common.Interfaces;

@@ -1,4 +1,4 @@
-using CustomerManagement.Shared.Common;
+using CustomerManagement.Shared;
 using CustomerManagement.Shared.DTOs;
 
 namespace Server.Application.Customers;

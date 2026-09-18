@@ -1,4 +1,4 @@
-using CustomerManagement.Shared.Common;
+using CustomerManagement.Shared;
 using CustomerManagement.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +6,7 @@ using Server.Application.Customers;
 
 namespace Server.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class CustomersController : ControllerBase

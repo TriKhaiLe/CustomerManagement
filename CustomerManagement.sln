@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Application", "Serve
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerManagement.Shared", "CustomerManagement.Shared\CustomerManagement.Shared.csproj", "{98959CFD-DA08-405A-9E31-0D8728675C73}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerManagement.Client", "CustomerManagement.Client\CustomerManagement.Client.csproj", "{C1DA8695-126E-4638-9CAF-9D76FE2F4FCC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{98959CFD-DA08-405A-9E31-0D8728675C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98959CFD-DA08-405A-9E31-0D8728675C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98959CFD-DA08-405A-9E31-0D8728675C73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1DA8695-126E-4638-9CAF-9D76FE2F4FCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1DA8695-126E-4638-9CAF-9D76FE2F4FCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1DA8695-126E-4638-9CAF-9D76FE2F4FCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1DA8695-126E-4638-9CAF-9D76FE2F4FCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
