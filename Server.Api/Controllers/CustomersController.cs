@@ -6,6 +6,7 @@ using Server.Application.Customers;
 
 namespace Server.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class CustomersController : ControllerBase

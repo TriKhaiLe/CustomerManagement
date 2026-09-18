@@ -1,7 +1,10 @@
-
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Server.Api.Middleware;
-using Server.Infrastructure;
 using Server.Application;
+using Server.Infrastructure;
 
 namespace Server.Api
 {
@@ -21,7 +24,62 @@ namespace Server.Api
             builder.Services.AddApplication();
             builder.Services.AddInfrastructure(builder.Configuration);
 
-            builder.Services.AddSwaggerGen();
+            var jwtSettings = builder.Configuration.GetSection("Jwt");
+            var secret = jwtSettings["Secret"]
+                ?? throw new InvalidOperationException("Jwt:Secret is not configured.");
+            var issuer = jwtSettings["Issuer"] ?? "CustomerManagement.Api";
+            var audience = jwtSettings["Audience"] ?? "CustomerManagement.Client";
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+                    ValidateIssuer = true,
+                    ValidIssuer = issuer,
+                    ValidateAudience = true,
+                    ValidAudience = audience,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromMinutes(1)
+                };
+            });
+
+            builder.Services.AddAuthorization();
+
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Customer Management API", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+            });
 
             // CORS — read allowed origins from configuration
             var allowedOrigins = builder.Configuration
@@ -41,7 +99,6 @@ namespace Server.Api
             var app = builder.Build();
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -53,8 +110,8 @@ namespace Server.Api
 
             app.UseCors();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 
