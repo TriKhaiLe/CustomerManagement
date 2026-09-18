@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
+
+  <data name="FullNameRequired"><value>Full name is required.</value></data>
+  <data name="FullNameMaxLength"><value>Full name cannot exceed 200 characters.</value></data>
+
+  <data name="EmailRequired"><value>Email is required.</value></data>
+  <data name="EmailInvalid"><value>Enter a valid email address.</value></data>
+  <data name="EmailMaxLength"><value>Email cannot exceed 256 characters.</value></data>
+
+  <data name="PhoneInvalid"><value>Enter a valid phone number, for example +61 2 5550 0100.</value></data>
+
+  <data name="DateOfBirthFuture"><value>Date of birth cannot be in the future.</value></data>
+
+  <data name="CustomerCodeMaxLength"><value>Customer code cannot exceed 50 characters.</value></data>
+
+</root>

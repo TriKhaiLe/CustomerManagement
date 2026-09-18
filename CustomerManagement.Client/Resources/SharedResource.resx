@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
+
+  <!-- App -->
+  <data name="App.Title"><value>Customer Management</value></data>
+
+  <!-- Language selector -->
+  <data name="Language.Select"><value>Language</value></data>
+  <data name="Language.English"><value>English</value></data>
+  <data name="Language.Vietnamese"><value>Vietnamese</value></data>
+
+  <!-- Login -->
+  <data name="Login.SignInToContinue"><value>Sign in to continue</value></data>
+  <data name="Login.Username"><value>Username</value></data>
+  <data name="Login.Password"><value>Password</value></data>
+  <data name="Login.UsernameRequired"><value>Username is required.</value></data>
+  <data name="Login.PasswordRequired"><value>Password is required.</value></data>
+  <data name="Login.ShowPassword"><value>Show password</value></data>
+  <data name="Login.HidePassword"><value>Hide password</value></data>
+  <data name="Login.SigningIn"><value>Signing in…</value></data>
+  <data name="Login.Login"><value>Login</value></data>
+  <data name="Login.CannotReachServer"><value>Cannot reach the server. Check your connection and try again.</value></data>
+  <data name="Login.RequestTimedOut"><value>The request timed out. Please try again.</value></data>
+  <data name="Login.GenericError"><value>Unable to sign in. Please try again.</value></data>
+
+  <!-- Navigation -->
+  <data name="Navigation.Customers"><value>Customers</value></data>
+  <data name="Navigation.Logout"><value>Logout</value></data>
+
+  <!-- CUSTOMER LIST -->
+  <data name="Customers.Title"><value>Customers</value></data>
+  <data name="Customers.Code"><value>Code</value></data>
+  <data name="Customers.FullName"><value>Full name</value></data>
+  <data name="Customers.Email"><value>Email</value></data>
+  <data name="Customers.Phone"><value>Phone</value></data>
+  <data name="Customers.DateOfBirth"><value>Date of birth</value></data>
+  <data name="Customers.Status"><value>Status</value></data>
+  <data name="Customers.Created"><value>Created</value></data>
+  <data name="Customers.Actions"><value>Actions</value></data>
+  <data name="Customers.Active"><value>Active</value></data>
+  <data name="Customers.Inactive"><value>Inactive</value></data>
+  <data name="Customers.SearchField"><value>Search field</value></data>
+  <data name="Customers.SearchTerm"><value>Search term</value></data>
+  <data name="Customers.FullNameSearch"><value>Full name</value></data>
+  <data name="Customers.PhoneNumberSearch"><value>Phone number</value></data>
+  <data name="Customers.Search"><value>Search</value></data>
+  <data name="Customers.Clear"><value>Clear</value></data>
+  <data name="Customers.Create"><value>Create customer</value></data>
+  <data name="Customers.Edit"><value>Edit</value></data>
+  <data name="Customers.Delete"><value>Delete</value></data>
+  <data name="Customers.DeleteCustomer"><value>Delete customer</value></data>
+  <data name="Customers.DeleteCustomerQuestion"><value>Delete {0}?</value></data>
+  <data name="Customers.DeleteCustomerDetail"><value>Customer {0} will be permanently removed. This cannot be undone.</value></data>
+  <data name="Customers.DeleteCustomerSuccess"><value>{0} was deleted.</value></data>
+  <data name="Customers.DeleteCustomerAlreadyDeleted"><value>{0} had already been deleted.</value></data>
+  <data name="Customers.NoMatches"><value>No matching customers</value></data>
+  <data name="Customers.NoMatchesDescription"><value>Nothing matched that search. Try a different term, or clear the search.</value></data>
+  <data name="Customers.NoCustomers"><value>No customers yet</value></data>
+  <data name="Customers.NoCustomersDescription"><value>Create your first customer to get started.</value></data>
+  <data name="Customers.Loading"><value>Loading customers…</value></data>
+
+  <!-- CUSTOMER FORM -->
+  <data name="Customers.New"><value>New customer</value></data>
+  <data name="Customers.EditCustomer"><value>Edit customer</value></data>
+  <data name="Customers.CustomerNotFound"><value>Customer not found</value></data>
+  <data name="Customers.CustomerNotFoundDetail"><value>Customer {0} does not exist, or has since been deleted.</value></data>
+  <data name="Customers.BackToCustomers"><value>Back to customers</value></data>
+  <data name="Customers.LoadingCustomer"><value>Loading customer…</value></data>
+  <data name="Customers.CustomerCode"><value>Customer code</value></data>
+  <data name="Customers.CustomerCodeHelper"><value>Optional. Leave blank and the server assigns one.</value></data>
+  <data name="Customers.Optional"><value>Optional.</value></data>
+  <data name="Customers.DateOfBirthHelper"><value>Optional.</value></data>
+  <data name="Customers.ActiveToggle"><value>Active</value></data>
+  <data name="Customers.CreateAction"><value>Create customer</value></data>
+  <data name="Customers.Creating"><value>Creating…</value></data>
+  <data name="Customers.SaveChanges"><value>Save changes</value></data>
+  <data name="Customers.Saving"><value>Saving…</value></data>
+  <data name="Customers.Cancel"><value>Cancel</value></data>
+  <data name="Customers.AssignedCode"><value>Assigned at creation and cannot be changed.</value></data>
+  <data name="Customers.ServerRejectedTitle"><value>The server rejected this request</value></data>
+  <data name="Customers.CustomerUpdated"><value>Customer {0} updated.</value></data>
+  <data name="Customers.CustomerNoLongerExists"><value>Customer {0} no longer exists. It may have been deleted.</value></data>
+
+  <!-- CONFIRM / COMMON -->
+  <data name="Common.Retry"><value>Retry</value></data>
+  <data name="Common.Confirm"><value>Confirm</value></data>
+  <data name="Common.Close"><value>Close</value></data>
+  <data name="Confirm.Confirm"><value>Confirm</value></data>
+  <data name="Confirm.Cancel"><value>Cancel</value></data>
+
+  <!-- Auth / Api -->
+  <data name="Auth.InvalidCredentials"><value>Invalid username or password.</value></data>
+  <data name="Auth.LoginFailedWithStatus"><value>Login failed with status {0}.</value></data>
+  <data name="Auth.MissingAccessToken"><value>Login response did not contain an access token.</value></data>
+
+  <data name="Api.ServerError"><value>The server had a problem completing that request. Please try again.</value></data>
+  <data name="Api.CannotReadResponse"><value>The server returned a response this app could not read.</value></data>
+  <data name="Api.EmptyResponse"><value>The server returned an empty response.</value></data>
+  <data name="Api.BadRequest"><value>The request was rejected as invalid.</value></data>
+  <data name="Api.Unauthorized"><value>Your session has expired. Please sign in again.</value></data>
+  <data name="Api.Forbidden"><value>You do not have permission to perform this action.</value></data>
+  <data name="Api.NotFound"><value>The requested item was not found.</value></data>
+  <data name="Api.Conflict"><value>That change conflicts with the current data. Reload and try again.</value></data>
+  <data name="Api.UnknownStatus"><value>The server returned {0} ({1}).</value></data>
+  <data name="Api.NetworkError"><value>Cannot reach the server. Check your connection and try again.</value></data>
+  <data name="Api.Timeout"><value>The request timed out. Please try again.</value></data>
+
+</root>

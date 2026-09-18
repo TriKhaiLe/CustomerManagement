@@ -1,0 +1,78 @@
+@using CustomerManagement.Client.Resources
+@using CustomerManagement.Shared.DTOs
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> L
+
+<MudStack Spacing="0">
+    <MudTextField @bind-Value="Model.FullName"
+                  For="@(() => Model.FullName)"
+                  Validation="@Validator"
+                  Label="@L["Customers.FullName"]"
+                  Variant="Variant.Outlined"
+                  Immediate="true"
+                  Disabled="Disabled"
+                  Adornment="Adornment.Start"
+                  AdornmentIcon="@Icons.Material.Filled.Person"
+                  AdornmentColor="Color.Default"
+                  autocomplete="name" />
+
+    <MudTextField @bind-Value="Model.Email"
+                  For="@(() => Model.Email)"
+                  Validation="@Validator"
+                  Label="@L["Customers.Email"]"
+                  Variant="Variant.Outlined"
+                  Immediate="true"
+                  Disabled="Disabled"
+                  Adornment="Adornment.Start"
+                  AdornmentIcon="@Icons.Material.Filled.Email"
+                  AdornmentColor="Color.Default"
+                  InputType="InputType.Email"
+                  autocomplete="email"
+                  Class="mt-4" />
+
+    <MudTextField @bind-Value="Model.PhoneNumber"
+                  For="@(() => Model.PhoneNumber)"
+                  Validation="@Validator"
+                  Label="@L["Customers.Phone"]"
+                  Variant="Variant.Outlined"
+                  Immediate="true"
+                  Disabled="Disabled"
+                  Adornment="Adornment.Start"
+                  AdornmentIcon="@Icons.Material.Filled.Phone"
+                  AdornmentColor="Color.Default"
+                  InputType="InputType.Telephone"
+                  autocomplete="tel"
+                  HelperText="@L["Customers.Optional"]"
+                  Class="mt-4" />
+
+    <MudDatePicker @bind-Date="Model.DateOfBirth"
+                   For="@(() => Model.DateOfBirth)"
+                   Validation="@Validator"
+                   Label="@L["Customers.DateOfBirth"]"
+                   Variant="Variant.Outlined"
+                   Editable="true"
+                   Disabled="Disabled"
+                   MaxDate="DateTime.Today"
+                   PickerVariant="PickerVariant.Dialog"
+                   HelperText="@L["Customers.DateOfBirthHelper"]"
+                   Class="mt-4" />
+
+    <MudSwitch T="bool"
+               @bind-Value="Model.IsActive"
+               Label="@L["Customers.ActiveToggle"]"
+               Color="Color.Primary"
+               Disabled="Disabled"
+               Class="mt-4" />
+</MudStack>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public CustomerRequestBase Model { get; set; } = default!;
+
+    [Parameter]
+    [EditorRequired]
+    public Func<object, string, IEnumerable<string>> Validator { get; set; } = default!;
+
+    [Parameter]
+    public bool Disabled { get; set; }
+}

@@ -1,0 +1,30 @@
+﻿@using CustomerManagement.Client.Resources
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> L
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+
+<MudNavMenu Class="mt-2">
+    <MudNavLink Href="customers"
+                Icon="@Icons.Material.Filled.People"
+                Match="NavLinkMatch.Prefix">
+        @L["Navigation.Customers"]
+    </MudNavLink>
+
+    <MudDivider Class="my-2" />
+
+    <MudNavLink Icon="@Icons.Material.Filled.Logout"
+                OnClick="LogoutAsync">
+        @L["Navigation.Logout"]
+    </MudNavLink>
+</MudNavMenu>
+
+@code {
+    private async Task LogoutAsync()
+    {
+        await AuthService.LogoutAsync();
+
+        // Letting the now-anonymous principal fall through to RedirectToLogin would append a returnUrl
+        // pointing back at the page the user just signed out of.
+        Navigation.NavigateTo(LoginRoute.Path, replace: true);
+    }
+}

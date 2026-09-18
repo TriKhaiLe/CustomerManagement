@@ -2,16 +2,52 @@ namespace CustomerManagement.Shared.Common;
 
 public class ApiErrorResponse
 {
-    public int Status { get; init; }
+    public string? Type { get; set; }
 
-    public string Title { get; init; } = string.Empty;
-    public string Message { get; init; } = string.Empty;
+    public string? Title { get; set; }
 
-    /// <summary>
-    /// Field-level validation errors, keyed by field name. Null/empty for non-validation failures.
-    /// </summary>
-    public IDictionary<string, string[]>? Errors { get; init; }
+    public int? Status { get; set; }
 
-    /// <summary>Correlation id for cross-referencing server logs.</summary>
-    public string? TraceId { get; init; }
+    public string? Detail { get; set; }
+
+    public string? Message { get; set; }
+
+    public string? TraceId { get; set; }
+
+    public Dictionary<string, string[]>? Errors { get; set; }
+
+    public string? GetSummary()
+    {
+        return GetFirstNonBlank(Detail)
+            ?? GetFirstNonBlank(Title)
+            ?? GetFirstNonBlank(Message)
+            ?? GetFirstNonBlank(Errors)
+            ?? null;
+    }
+
+    private static string? GetFirstNonBlank(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? null : value;
+    }
+
+    private static string? GetFirstNonBlank(Dictionary<string, string[]>? errors)
+    {
+        if (errors is null)
+        {
+            return null;
+        }
+
+        foreach (var value in errors.Values)
+        {
+            foreach (var message in value)
+            {
+                if (!string.IsNullOrWhiteSpace(message))
+                {
+                    return message;
+                }
+            }
+        }
+
+        return null;
+    }
 }

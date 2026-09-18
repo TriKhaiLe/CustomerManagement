@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value></resheader>
+
+  <data name="FullNameRequired"><value>Vui lòng nhập họ và tên.</value></data>
+  <data name="FullNameMaxLength"><value>Họ và tên không được vượt quá 200 ký tự.</value></data>
+
+  <data name="EmailRequired"><value>Vui lòng nhập email.</value></data>
+  <data name="EmailInvalid"><value>Vui lòng nhập địa chỉ email hợp lệ.</value></data>
+  <data name="EmailMaxLength"><value>Email không được vượt quá 256 ký tự.</value></data>
+
+  <data name="PhoneInvalid"><value>Vui lòng nhập số điện thoại hợp lệ, ví dụ +61 2 5550 0100.</value></data>
+
+  <data name="DateOfBirthFuture"><value>Ngày sinh không được ở trong tương lai.</value></data>
+
+  <data name="CustomerCodeMaxLength"><value>Mã khách hàng không được vượt quá 50 ký tự.</value></data>
+
+</root>

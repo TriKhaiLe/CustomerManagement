@@ -55,12 +55,13 @@ public class ExceptionHandlingMiddleware
 
         var response = new ApiErrorResponse
         {
+            Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
             Status = (int)status,
             Title = title,
-            Message = status == HttpStatusCode.InternalServerError
+            Detail = status == HttpStatusCode.InternalServerError
                 ? "An unexpected error occurred. Please try again later."
                 : exception.Message,
-            Errors = errors,
+            Errors = errors is null ? null : new Dictionary<string, string[]>(errors),
             TraceId = context.TraceIdentifier
         };
 

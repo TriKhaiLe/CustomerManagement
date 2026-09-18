@@ -1,0 +1,66 @@
+﻿@inherits LayoutComponentBase
+@using CustomerManagement.Client.Resources
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SharedResource> L
+@inject CustomerManagement.Client.Services.ILanguageService LanguageService
+
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                      Color="Color.Inherit"
+                      Edge="Edge.Start"
+                      aria-label="Toggle navigation"
+                      OnClick="ToggleDrawer" />
+        <MudText Typo="Typo.h6">@L["App.Title"]</MudText>
+        <MudSpacer />
+        <MudSelect T="string"
+                   Variant="Variant.Text"
+                   Dense="true"
+                   Color="Color.Inherit"
+                 Value="@LanguageService.CurrentCultureName"
+                 ValueChanged="ChangeLanguageAsync"
+                 AriaLabel='@L["Language.Select"]'>
+                    <MudSelectItem Value="@("vi-VN")">@L["Language.Vietnamese"]</MudSelectItem>
+                    <MudSelectItem Value="@("en-US")">@L["Language.English"]</MudSelectItem>
+        </MudSelect>
+
+        <AuthorizeView>
+            <Authorized>
+                <MudIcon Icon="@Icons.Material.Filled.AccountCircle" Class="me-2" />
+                <MudText Typo="Typo.body1">@context.User.Identity?.Name</MudText>
+            </Authorized>
+        </AuthorizeView>
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="_drawerOpen"
+               ClipMode="DrawerClipMode.Always"
+               Elevation="1">
+        <NavMenu />
+    </MudDrawer>
+
+    <MudMainContent Class="px-4 pb-4">
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool _drawerOpen = true;
+
+    private void ToggleDrawer()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    private async Task ChangeLanguageAsync(string cultureName)
+    {
+        if (string.IsNullOrWhiteSpace(cultureName)) return;
+        if (cultureName != "vi-VN" && cultureName != "en-US") return;
+
+        await LanguageService.SetCultureAsync(cultureName);
+        StateHasChanged();
+    }
+}

@@ -1,4 +1,4 @@
-using CustomerManagement.Shared.Common;
+using CustomerManagement.Shared;
 using CustomerManagement.Shared.DTOs;
 using FluentValidation;
 using Server.Application.Common.Exceptions;
@@ -39,8 +39,10 @@ public class CustomerService : ICustomerService
             CustomerCode = customerCode,
             FullName = request.FullName.Trim(),
             Email = string.IsNullOrWhiteSpace(request.Email) ? null : request.Email.Trim(),
-            PhoneNumber = request.PhoneNumber.Trim(),
-            DateOfBirth = request.DateOfBirth,
+            PhoneNumber = string.IsNullOrWhiteSpace(request.PhoneNumber) ? string.Empty : request.PhoneNumber.Trim(),
+            DateOfBirth = request.DateOfBirth.HasValue
+                ? DateOnly.FromDateTime(request.DateOfBirth.Value)
+                : null,
             IsActive = request.IsActive,
             CreatedAt = DateTime.UtcNow
         };
