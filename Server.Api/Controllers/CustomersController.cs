@@ -45,4 +45,23 @@ public class CustomersController : ControllerBase
         var result = await _customerService.GetByIdAsync(id, cancellationToken);
         return Ok(result);
     }
+
+    [HttpPut("{id:int}")]
+    [ProducesResponseType(typeof(CustomerDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<CustomerDto>> Update(int id, [FromBody] UpdateCustomerRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _customerService.UpdateAsync(id, request, cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        await _customerService.DeleteAsync(id, cancellationToken);
+        return NoContent();
+    }
 }

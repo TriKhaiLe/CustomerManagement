@@ -12,13 +12,16 @@ public class CustomerService : ICustomerService
 {
     private readonly ICustomerRepository _repository;
     private readonly IValidator<CreateCustomerRequest> _createValidator;
+    private readonly IValidator<UpdateCustomerRequest> _updateValidator;
 
     public CustomerService(
         ICustomerRepository repository,
-        IValidator<CreateCustomerRequest> createValidator)
+        IValidator<CreateCustomerRequest> createValidator,
+        IValidator<UpdateCustomerRequest> updateValidator)
     {
         _repository = repository;
         _createValidator = createValidator;
+        _updateValidator = updateValidator;
     }
 
     public async Task<CustomerDto> CreateAsync(CreateCustomerRequest request, CancellationToken cancellationToken = default)
@@ -91,6 +94,39 @@ public class CustomerService : ICustomerService
             ?? throw new NotFoundException(nameof(Customer), id);
 
         return customer.ToDto();
+    }
+
+    public async Task<CustomerDto> UpdateAsync(int id, UpdateCustomerRequest request, CancellationToken cancellationToken = default)
+    {
+        var validationResult = await _updateValidator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new AppValidationException(validationResult.Errors);
+        }
+
+        var customer = await _repository.GetByIdAsync(id, cancellationToken)
+            ?? throw new NotFoundException(nameof(Customer), id);
+
+        customer.FullName = request.FullName.Trim();
+        customer.Email = string.IsNullOrWhiteSpace(request.Email) ? null : request.Email.Trim();
+        customer.PhoneNumber = request.PhoneNumber.Trim();
+        customer.DateOfBirth = request.DateOfBirth;
+        customer.IsActive = request.IsActive;
+        customer.UpdatedAt = DateTime.UtcNow;
+
+        _repository.Update(customer);
+        await _repository.SaveChangesAsync(cancellationToken);
+
+        return customer.ToDto();
+    }
+
+    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var customer = await _repository.GetByIdAsync(id, cancellationToken)
+            ?? throw new NotFoundException(nameof(Customer), id);
+
+        _repository.Remove(customer);
+        await _repository.SaveChangesAsync(cancellationToken);
     }
 
 }
